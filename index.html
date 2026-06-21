@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- 카카오톡 인앱브라우저 → 외부 브라우저 자동 전환 -->
+<script>
+(function(){var ua=navigator.userAgent.toLowerCase();
+ if(/kakaotalk/i.test(ua)){var url=window.location.href;
+  if(/iphone|ipad|ipod/i.test(ua)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);}
+  else{location.href='intent://'+url.replace(/https?:\/\//i,'')+'#Intent;scheme=https;package=com.android.chrome;end';}}
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GnB 권곡캠퍼스">
+<link rel="icon" type="image/png" sizes="32x32" href="gnb-icon-white-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="gnb-icon-white-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="gnb-icon-white-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="gnb-icon-white-180.png">
+<meta name="theme-color" content="#3B82F6">
+<title>GnB연세스타 권곡캠퍼스 — 단어 학습 앱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Jua&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh;min-height:100dvh}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:linear-gradient(135deg,#FEF3C7 0%,#FDE68A 30%,#FEF9C3 60%,#FDF4FF 100%);
+  padding:20px 16px 40px;
+  color:#1F2937;
+  min-height:100vh;min-height:100dvh
+}
+.wrap{max-width:500px;margin:0 auto}
+
+/* ════════ HERO ════════ */
+.hero{
+  background:linear-gradient(135deg,#3B82F6 0%,#8B5CF6 50%,#EC4899 100%);
+  border-radius:24px;padding:28px 22px;color:white;
+  box-shadow:0 16px 48px rgba(99,102,241,.35);
+  text-align:center;margin-bottom:22px;position:relative;overflow:hidden
+}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(253,224,71,.3),transparent 70%);border-radius:50%}
+.hero-star{font-size:48px;margin-bottom:6px;filter:drop-shadow(0 6px 20px rgba(253,224,71,.55));position:relative;z-index:1;animation:floatStar 3s ease-in-out infinite}
+@keyframes floatStar{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero-logo{background:linear-gradient(135deg,#F59E0B 0%,#FBBF24 100%);color:white;display:inline-block;font-family:'Nunito',sans-serif;font-weight:900;font-size:19px;padding:8px 22px;border-radius:14px;letter-spacing:.2px;margin-bottom:10px;box-shadow:0 6px 22px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.3);position:relative;z-index:1;text-shadow:0 2px 6px rgba(0,0,0,.18)}
+.hero h1{font-family:'Jua',sans-serif;font-size:24px;font-weight:400;letter-spacing:-.3px;margin-bottom:4px;position:relative;z-index:1;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.hero .tagline{font-size:13px;font-weight:600;opacity:.95;position:relative;z-index:1;color:#FDE047}
+
+/* ════════ 섹션 헤더 ════════ */
+.sec-title{
+  font-family:'Jua',sans-serif;font-size:17px;font-weight:400;
+  color:#1F2937;margin:24px 0 11px;padding-left:6px;
+  display:flex;align-items:center;gap:8px
+}
+.sec-title .badge{background:white;font-size:10.5px;font-weight:700;color:#6B7280;padding:3px 9px;border-radius:9px;border:1px solid #E5E7EB}
+
+/* ════════ 학원 정보 카드 ════════ */
+.info-card{
+  background:white;border:2px solid #F3F4F6;border-radius:20px;
+  padding:0;overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.06)
+}
+.map-wrap{position:relative;height:200px;background:#F3F4F6;overflow:hidden}
+.map-wrap iframe{width:100%;height:100%;border:0;display:block}
+.map-overlay{
+  position:absolute;top:12px;left:12px;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(6px);
+  padding:6px 12px;border-radius:9px;font-size:11.5px;font-weight:800;color:#1F2937;
+  box-shadow:0 4px 12px rgba(0,0,0,.1)
+}
+
+.info-body{padding:18px 20px}
+.info-row{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px dashed #F3F4F6}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.info-row .ico{font-size:18px;width:24px;flex-shrink:0;line-height:1.3}
+.info-row .txt{flex:1;font-size:13px;color:#374151;line-height:1.5;font-weight:600}
+.info-row .txt strong{display:block;color:#1F2937;font-weight:900;font-size:13.5px;font-family:'Jua',sans-serif;margin-bottom:1px}
+.info-row .txt .sub{color:#6B7280;font-size:11.5px;font-weight:600;margin-top:2px}
+
+/* 빠른 액션 버튼 (전화 + 지도) */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 20px 18px;background:#FAFAFA;border-top:1px solid #F3F4F6}
+.qa-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px;border-radius:12px;text-decoration:none;
+  font-family:'Jua',sans-serif;font-size:13.5px;font-weight:400;
+  transition:all .15s;cursor:pointer;-webkit-appearance:none;border:none
+}
+.qa-btn:active{transform:scale(.96)}
+.qa-call{background:linear-gradient(135deg,#10B981,#059669);color:white;box-shadow:0 4px 14px rgba(16,185,129,.3)}
+.qa-call:hover{box-shadow:0 6px 18px rgba(16,185,129,.4)}
+.qa-map{background:linear-gradient(135deg,#03C75A,#03B453);color:white;box-shadow:0 4px 14px rgba(3,199,90,.3)}
+.qa-map:hover{box-shadow:0 6px 18px rgba(3,199,90,.4)}
+
+/* ════════ 반 선택 카드 그리드 ════════ */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+/* 🌈 초등반 3열 그리드 (한 줄에 3개) */
+.grid-3{grid-template-columns:repeat(3,1fr);gap:8px}
+.grid-3 .card{padding:14px 7px;text-align:center}
+.grid-3 .ico{margin:0 auto 7px}
+.grid-3 .nm{font-size:12.5px;line-height:1.25}
+.grid-3 .sub{display:none}
+.card{
+  display:block;text-decoration:none;color:inherit;
+  background:white;border:2px solid #E5E7EB;border-radius:18px;
+  padding:14px 14px;transition:all .2s;position:relative;
+  -webkit-tap-highlight-color:transparent;cursor:pointer
+}
+.card:active{transform:scale(.97)}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.1)}
+.card.elem{background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border-color:#FDE68A}
+.card.elem:hover{border-color:#F59E0B;box-shadow:0 12px 28px rgba(245,158,11,.2)}
+.card.elem .ico{background:linear-gradient(135deg,#F59E0B,#EC4899);color:white}
+.card.elem .nm{color:#92400E}
+/* 🆕 중·고등반: 더 진한 네이비 (학구적·신뢰감) */
+.card.dark{background:linear-gradient(135deg,#172554 0%,#1E40AF 100%);border-color:rgba(147,197,253,.5)}
+.card.dark:hover{border-color:#93C5FD;box-shadow:0 12px 28px rgba(30,64,175,.45)}
+.card.dark .ico{background:#FFFBEB;color:#1E3A8A;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.card.dark .nm{color:#FFFFFF}
+.card.dark .sub{color:#BFDBFE}
+/* ⭐ Star-Words 카드: 보라+시안+골드 그라데이션 (특별 학습) */
+.card.star{background:linear-gradient(135deg,#8B5CF6 0%,#06B6D4 55%,#F59E0B 100%);border-color:rgba(253,224,71,.6);position:relative;overflow:hidden}.card.star::before{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(253,224,71,.4),transparent 70%);border-radius:50%;pointer-events:none}
+.card.star:hover{border-color:#FDE047;box-shadow:0 14px 32px rgba(139,92,246,.45)}
+.card.star .ico{background:rgba(255,255,255,.95);color:#7C3AED;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.card.star .nm{color:#FFFFFF;text-shadow:0 2px 10px rgba(0,0,0,.25);position:relative;z-index:1}
+.card.star .sub{color:rgba(255,255,255,.95);position:relative;z-index:1}
+/* 📖 사이트워드 카드: 민트/그린 (읽기 기초) */
+.card.sw{background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%);border-color:#A7F3D0}
+.card.sw:hover{border-color:#10B981;box-shadow:0 12px 28px rgba(16,185,129,.2)}
+.card.sw .ico{background:linear-gradient(135deg,#10B981,#06B6D4);color:white}
+.card.sw .nm{color:#065F46}
+.ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;letter-spacing:-.5px;margin-bottom:8px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.nm{font-family:'Jua',sans-serif;font-size:16px;font-weight:400;line-height:1.2;letter-spacing:-.3px}
+.sub{font-size:11px;font-weight:600;color:#9CA3AF;margin-top:4px;font-family:'Noto Sans KR',sans-serif}
+
+/* ════════ 학원 소식 링크 ════════ */
+.links-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.link-card{
+  display:flex;align-items:center;gap:11px;
+  background:white;border:2px solid #E5E7EB;border-radius:15px;
+  padding:14px 13px;text-decoration:none;color:inherit;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;cursor:pointer
+}
+.link-card:active{transform:scale(.97)}
+.link-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.link-card .lico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:white;font-weight:900}
+.link-card.home .lico{background:linear-gradient(135deg,#3B82F6,#8B5CF6)}
+.link-card.home{border-color:#DBEAFE}
+.link-card.home:hover{border-color:#3B82F6}
+.link-card.blog .lico{background:linear-gradient(135deg,#03C75A,#03B453)}
+.link-card.blog{border-color:#D1FAE5}
+.link-card.blog:hover{border-color:#03C75A}
+.link-card .ltxt{flex:1;min-width:0}
+.link-card .ltxt strong{display:block;font-family:'Jua',sans-serif;font-size:13.5px;font-weight:400;color:#1F2937}
+.link-card .ltxt .lsub{font-size:10.5px;color:#9CA3AF;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ════════ 상담 신청 CTA ════════ */
+.cta-banner{
+  display:block;text-decoration:none;color:inherit;
+  background:linear-gradient(135deg,#F59E0B 0%,#EC4899 50%,#8B5CF6 100%);
+  border-radius:22px;padding:22px 24px;color:white;
+  box-shadow:0 14px 40px rgba(236,72,153,.35);
+  margin-top:22px;position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer
+}
+.cta-banner::before{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,.2),transparent 70%);border-radius:50%}
+.cta-banner:active{transform:scale(.98)}
+.cta-banner:hover{box-shadow:0 18px 48px rgba(236,72,153,.45);transform:translateY(-2px)}
+.cta-content{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.cta-icon{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.cta-text{flex:1}
+.cta-text .small{font-size:11px;font-weight:700;opacity:.95;color:#FDE047;letter-spacing:.3px;margin-bottom:3px}
+.cta-text .big{font-family:'Jua',sans-serif;font-size:18px;font-weight:400;line-height:1.25;letter-spacing:-.3px}
+.cta-text .desc{font-size:11.5px;opacity:.95;margin-top:3px;font-weight:600}
+.cta-arrow{font-size:24px;font-weight:900;opacity:.9}
+
+/* ════════ 문제해결 안내 배너 ════════ */
+.help-banner{
+  display:block;text-decoration:none;color:inherit;
+  background:linear-gradient(135deg,#06B6D4 0%,#3B82F6 55%,#6366F1 100%);
+  border-radius:18px;padding:16px 20px;color:white;
+  box-shadow:0 10px 30px rgba(6,182,212,.3);
+  margin-top:12px;position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer
+}
+.help-banner::before{content:'';position:absolute;bottom:-26px;left:-20px;width:110px;height:110px;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);border-radius:50%}
+.help-banner:active{transform:scale(.98)}
+.help-banner:hover{box-shadow:0 14px 38px rgba(6,182,212,.4);transform:translateY(-2px)}
+.help-content{display:flex;align-items:center;gap:13px;position:relative;z-index:1}
+.help-icon{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.help-text{flex:1}
+.help-text .small{font-size:10.5px;font-weight:700;opacity:.95;color:#FDE047;letter-spacing:.3px;margin-bottom:2px}
+.help-text .big{font-family:'Jua',sans-serif;font-size:16px;font-weight:400;line-height:1.25;letter-spacing:-.3px}
+.help-text .desc{font-size:11px;opacity:.95;margin-top:2px;font-weight:600}
+.help-arrow{font-size:22px;font-weight:900;opacity:.9}
+
+/* ════════ 푸터 ════════ */
+.footer{text-align:center;margin-top:32px;padding:16px;color:#6B7280;font-size:11.5px;font-weight:600}
+.footer .heart{color:#EC4899}
+.footer .biz{margin-top:6px;font-size:10.5px;color:#9CA3AF}
+
+@media (max-width:380px){
+  .grid:not(.grid-3){grid-template-columns:1fr}
+  .grid-3{grid-template-columns:repeat(3,1fr);gap:6px}
+  .grid-3 .card{padding:12px 5px}
+  .grid-3 .ico{width:38px;height:38px;font-size:12px}
+  .grid-3 .nm{font-size:11px}
+  .links-row{grid-template-columns:1fr}
+  .hero h1{font-size:21px}
+  .cta-text .big{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-star">⭐</div>
+    <div class="hero-logo">GnB Star-Words</div>
+    <h1>GnB연세스타 권곡캠퍼스</h1>
+    <div class="tagline">📚 단어는 저금이에요! 매일 조금씩 쌓아가는 영어 실력</div>
+  </div>
+
+  <!-- 초등반 -->
+  <div class="sec-title">
+    🌈 초등반
+    <span class="badge">9개 학습</span>
+  </div>
+  <div class="grid grid-3">
+    <a class="card elem" href="e2-1.html"><div class="ico">2-1</div><div class="nm">예서쌤 2반 1교시</div></a>
+    <a class="card elem" href="e2-2.html"><div class="ico">2-2</div><div class="nm">예서쌤 2반 2교시</div></a>
+    <a class="card elem" href="e2-3.html"><div class="ico">2-3</div><div class="nm">예서쌤 2반 3교시</div></a>
+    <a class="card elem" href="e3-1.html"><div class="ico">3-1</div><div class="nm">지원쌤 3반 1교시</div></a>
+    <a class="card elem" href="e3-2.html"><div class="ico">3-2</div><div class="nm">지원쌤 3반 2교시</div></a>
+    <a class="card elem" href="e3-3.html"><div class="ico">3-3</div><div class="nm">지원쌤 3반 3교시</div></a>
+    <a class="card elem" href="e1-1.html"><div class="ico">★</div><div class="nm">원장님 Class</div></a>
+    <a class="card sw" href="sightword_stu.html"><div class="ico">📖</div><div class="nm">사이트워드</div></a>
+    <a class="card star" href="verb_3_stu.html"><div class="ico">⭐</div><div class="nm">동사3단변화</div></a>
+  </div>
+  <div class="sec-title">
+    🌑 중·고등반
+    <span class="badge">4개 클래스</span>
+  </div>
+  <div class="grid">
+    <a class="card dark" href="m1.html"><div class="ico">중1</div><div class="nm">중등 1학년</div><div class="sub">체계적 어휘 학습</div></a>
+    <a class="card dark" href="m2.html"><div class="ico">중2</div><div class="nm">중등 2학년</div><div class="sub">체계적 어휘 학습</div></a>
+    <a class="card dark" href="m3.html"><div class="ico">중3</div><div class="nm">중등 3학년</div><div class="sub">고입 대비 어휘</div></a>
+    <a class="card dark" href="h1.html"><div class="ico">고등</div><div class="nm">고등반</div><div class="sub">수능 대비 어휘</div></a>
+  </div>
+
+  <!-- 학원 정보 -->
+  <div class="sec-title">
+    📍 학원 정보
+    <span class="badge">위치 · 전화 · 시간</span>
+  </div>
+  <div class="info-card">
+    <div class="map-wrap">
+      <div class="map-overlay">🎯 권곡초등학교 정문 앞</div>
+      <iframe
+        src="https://www.google.com/maps?q=%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84+%EC%95%84%EC%82%B0%EC%8B%9C+%EA%B6%8C%EA%B3%A1%EB%8F%99+%EB%AC%B8%ED%99%94%EB%A1%9C+243%EB%B2%88%EA%B8%B8+13&output=embed&z=17"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+    </div>
+    <div class="info-body">
+      <div class="info-row">
+        <div class="ico">📍</div>
+        <div class="txt">
+          <strong>학원 위치</strong>
+          충청남도 아산시 권곡동 문화로 243번길 13<br>삼부르네상스 상가동 3층
+          <div class="sub">(권곡초등학교 정문 바로 앞)</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="ico">🕐</div>
+        <div class="txt">
+          <strong>운영 시간</strong>
+          오후 2시 ~ 9시
+          <div class="sub">월요일 ~ 금요일</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="ico">☎️</div>
+        <div class="txt">
+          <strong>전화 문의</strong>
+          041-546-0305
+          <div class="sub">상담 가능 시간: 운영 시간 내</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-actions">
+      <a class="qa-btn qa-call" href="tel:041-546-0305">☎️ 전화 걸기</a>
+      <a class="qa-btn qa-map" href="https://map.naver.com/p/search/충청남도%20아산시%20권곡동%20문화로%20243번길%2013" target="_blank" rel="noopener">📍 네이버 지도</a>
+    </div>
+  </div>
+
+  <!-- 신규 상담 CTA -->
+  <a class="cta-banner" href="https://docs.google.com/forms/d/e/1FAIpQLSe0NlNSj7cXOvz8dUZODDyw8ZdoJxrJAkgRdGcRrefziuxdIQ/viewform?usp=sharing&ouid=110803681647954982736" target="_blank" rel="noopener">
+    <div class="cta-content">
+      <div class="cta-icon">📝</div>
+      <div class="cta-text">
+        <div class="small">⭐ NEW STUDENT</div>
+        <div class="big">신규 상담 · 레벨테스트 신청</div>
+        <div class="desc">초·중·고등 영어/수학 무료 진단</div>
+      </div>
+      <div class="cta-arrow">→</div>
+    </div>
+  </a>
+
+  <!-- 앱 사용 문제해결 안내 -->
+  <a class="help-banner" href="Star_words_app_server_error_guide.html">
+    <div class="help-content">
+      <div class="help-icon">🛟</div>
+      <div class="help-text">
+        <div class="small">📱 도움이 필요하세요?</div>
+        <div class="big">앱이 잘 안 될 때 해결 안내서</div>
+        <div class="desc">접속 안 됨 · 소리 안 남 · 자녀보호 앱 설정</div>
+      </div>
+      <div class="help-arrow">→</div>
+    </div>
+  </a>
+
+  <!-- 학원 소식 -->
+  <div class="sec-title">
+    🔗 학원 소식 더 보기
+  </div>
+  <div class="links-row">
+    <a class="link-card home" href="https://gnbysstarhomepage.netlify.app/" target="_blank" rel="noopener">
+      <div class="lico">🏠</div>
+      <div class="ltxt">
+        <strong>학원 홈페이지</strong>
+        <div class="lsub">gnbysstarhomepage.netlify.app</div>
+      </div>
+    </a>
+    <a class="link-card blog" href="https://blog.naver.com/gnbysstar" target="_blank" rel="noopener">
+      <div class="lico">📝</div>
+      <div class="ltxt">
+        <strong>네이버 블로그</strong>
+        <div class="lsub">blog.naver.com/gnbysstar</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    Made with <span class="heart">♥</span> for GnB students<br>
+    <div class="biz">충청남도 아산시 권곡동 · GnB연세스타 권곡캠퍼스 · ☎️ 041-546-0305</div>
+  </div>
+
+</div>
+</body>
+</html>

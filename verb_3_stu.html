@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- 카카오톡 인앱브라우저 → 외부 브라우저 자동 전환 -->
+<script>
+(function(){var ua=navigator.userAgent.toLowerCase();
+ if(/kakaotalk/i.test(ua)){var url=window.location.href;
+  if(/iphone|ipad|ipod/i.test(ua)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);}
+  else{location.href='intent://'+url.replace(/https?:\/\//i,'')+'#Intent;scheme=https;package=com.android.chrome;end';}}
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Star-Words">
+<meta name="theme-color" content="#7C3AED">
+<title>⭐ Star-Words — 동사 3단변화 학습 | GnB 권곡캠퍼스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Jua&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#8B5CF6;--purple-d:#7C3AED;--cyan:#06B6D4;--cyan-d:#0891B2;
+  --gold:#F59E0B;--gold-d:#D97706;--ink:#1F2937;--muted:#6B7280;
+  --pink:#EC4899;--green:#10B981;--red:#EF4444;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;min-height:100dvh}
+body{font-family:'Noto Sans KR',sans-serif;background:linear-gradient(135deg,#EDE9FE 0%,#CFFAFE 50%,#FEF3C7 100%);min-height:100dvh;color:var(--ink)}
+.app{max-width:500px;margin:0 auto;min-height:100dvh;background:white;box-shadow:0 0 50px rgba(0,0,0,.08);position:relative;overflow:hidden}
+
+/* ════════ 로그인 화면 ════════ */
+.ov{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;text-align:center}
+.ov-purple{background:radial-gradient(circle at 25% 25%,#8B5CF6 0%,transparent 50%),radial-gradient(circle at 75% 75%,#06B6D4 0%,transparent 50%),linear-gradient(135deg,#4C1D95 0%,#0E7490 100%)}
+.mascot{font-size:80px;margin-bottom:12px;filter:drop-shadow(0 8px 24px rgba(253,224,71,.5));animation:bounce 2.5s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ov-logo{display:inline-block;background:linear-gradient(135deg,#F59E0B,#FDE047);color:white;font-family:'Outfit','Nunito',sans-serif;font-weight:900;font-size:24px;padding:10px 22px;border-radius:14px;letter-spacing:.5px;margin-bottom:12px;box-shadow:0 8px 32px rgba(245,158,11,.5)}
+.class-badge{background:rgba(253,224,71,.2);border:1.5px solid rgba(253,224,71,.6);color:#FDE047;font-family:'Outfit','Pretendard',sans-serif;font-weight:800;font-size:18px;padding:10px 22px;border-radius:14px;margin-bottom:20px;letter-spacing:.4px;text-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(8px)}
+.ov h2{color:white;font-family:'Jua',sans-serif;font-size:26px;font-weight:400;margin-bottom:8px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.ov .sub{color:rgba(255,255,255,.85);font-size:14px;font-weight:600;margin-bottom:24px}
+.name-inp{width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:white;font-size:16px;font-weight:700;font-family:inherit;text-align:center;backdrop-filter:blur(8px);outline:none;transition:all .2s}
+.name-inp::placeholder{color:rgba(255,255,255,.5)}
+.name-inp:focus{border-color:#FDE047;background:rgba(253,224,71,.15);box-shadow:0 0 0 4px rgba(253,224,71,.15)}
+.type-select{display:flex;gap:10px;margin:14px 0 6px;width:100%;max-width:340px}
+.type-opt{flex:1;cursor:pointer;padding:14px;border-radius:14px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:white;font-family:'Jua',sans-serif;font-size:16px;font-weight:700;text-align:center;transition:all .2s;backdrop-filter:blur(8px);user-select:none}
+.type-opt.on{border-color:#FDE047;background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(253,224,71,.25));color:#FDE047;box-shadow:0 4px 16px rgba(245,158,11,.3)}
+.type-opt:hover:not(.on){background:rgba(255,255,255,.18)}
+.go-btn{width:100%;max-width:340px;margin-top:18px;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#F59E0B,#EC4899);color:white;font-family:'Jua',sans-serif;font-size:18px;font-weight:400;cursor:pointer;box-shadow:0 8px 28px rgba(245,158,11,.4);transition:all .2s}
+.go-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(245,158,11,.5)}
+.go-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.err{color:#FCA5A5;font-size:12.5px;margin-top:8px;font-weight:700;min-height:18px}
+.loading{color:rgba(255,255,255,.85);font-size:12.5px;margin-top:12px;font-weight:600}
+
+/* ════════ 헤더 ════════ */
+.hd{display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#8B5CF6 0%,#06B6D4 50%,#F59E0B 100%);color:white;position:sticky;top:0;z-index:50;box-shadow:0 4px 20px rgba(124,58,237,.3)}
+.hd-logo{background:white;color:#7C3AED;font-family:'Outfit',sans-serif;font-weight:900;font-size:14px;padding:5px 11px;border-radius:10px;letter-spacing:-.5px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hd-info{flex:1;min-width:0}
+.hd-info .t1{font-family:'Jua',sans-serif;font-size:14px;font-weight:400;letter-spacing:-.3px;line-height:1.15}
+.hd-info .t2{font-size:10.5px;color:#FDE047;font-weight:700;margin-top:1px}
+.stu-badge{background:rgba(253,224,71,.22);border:1.5px solid rgba(253,224,71,.6);color:#FDE047;font-size:14px;font-weight:900;padding:6px 12px;border-radius:11px;display:inline-flex;align-items:center;gap:6px;backdrop-filter:blur(8px);text-shadow:0 2px 6px rgba(0,0,0,.4);letter-spacing:-.3px}
+.live-dot{width:6px;height:6px;background:#4ADE80;border-radius:50%;animation:pulse 1.5s ease-in-out infinite;box-shadow:0 0 8px rgba(74,222,128,.7)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.book-lbl{padding:8px 16px;background:linear-gradient(180deg,rgba(139,92,246,.06),transparent);color:#7C3AED;font-family:'Jua',sans-serif;font-size:14px;font-weight:400;border-bottom:1px solid #F3E8FF}
+
+/* ════════ 탭 ════════ */
+.tabs{display:flex;background:white;border-bottom:1px solid #E5E7EB;position:sticky;top:53px;z-index:40;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:78px;padding:13px 6px;border:none;background:transparent;color:#9CA3AF;font-family:'Jua',sans-serif;font-size:12.5px;font-weight:400;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
+.tab.on{color:#7C3AED;border-bottom-color:#7C3AED;background:linear-gradient(180deg,transparent,rgba(139,92,246,.05))}
+.tab:hover:not(.on){color:#7C3AED;background:rgba(139,92,246,.04)}
+
+/* ════════ 메인 ════════ */
+main{padding:16px;min-height:calc(100dvh - 110px)}
+
+/* 홈 배너 */
+.home-banner{background:linear-gradient(135deg,#8B5CF6 0%,#06B6D4 50%,#F59E0B 100%);border-radius:20px;padding:20px 18px;color:white;box-shadow:0 10px 32px rgba(124,58,237,.3);margin-bottom:18px;position:relative;overflow:hidden}
+.home-banner::before{content:'⭐';position:absolute;top:-10px;right:-10px;font-size:80px;opacity:.15;transform:rotate(20deg)}
+.home-banner h2{font-family:'Jua',sans-serif;font-size:18px;font-weight:400;margin-bottom:4px;position:relative;z-index:1}
+.home-banner h2 .name-hl{color:#FDE047;font-size:24px;font-weight:900;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.home-banner .sub-msg{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.95);position:relative;z-index:1;margin-top:3px}
+
+.sec{font-family:'Jua',sans-serif;font-size:15px;font-weight:400;color:#374151;margin:18px 0 10px;padding-left:4px}
+.sec-lbl{font-size:11px;color:#9CA3AF;font-weight:600;margin-left:6px}
+
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.action-card{background:white;border:2px solid #E5E7EB;border-radius:18px;padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.action-card:active{transform:scale(.97)}
+.action-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.08)}
+.action-card.purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE}
+.action-card.purple:hover{border-color:#8B5CF6;box-shadow:0 12px 28px rgba(139,92,246,.2)}
+.action-card.purple .ico{background:linear-gradient(135deg,#8B5CF6,#A78BFA);color:white}
+.action-card.cyan{background:linear-gradient(135deg,#ECFEFF,#CFFAFE);border-color:#A5F3FC}
+.action-card.cyan:hover{border-color:#06B6D4;box-shadow:0 12px 28px rgba(6,182,212,.2)}
+.action-card.cyan .ico{background:linear-gradient(135deg,#06B6D4,#22D3EE);color:white}
+.action-card.amber{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:#FDE68A}
+.action-card.amber:hover{border-color:#F59E0B;box-shadow:0 12px 28px rgba(245,158,11,.2)}
+.action-card.amber .ico{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:white}
+.action-card.red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FECACA}
+.action-card.red:hover{border-color:#EF4444;box-shadow:0 12px 28px rgba(239,68,68,.2)}
+.action-card.red .ico{background:linear-gradient(135deg,#EF4444,#F87171);color:white}
+.action-card .ico{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.12);margin-bottom:2px}
+.action-card .nm{font-family:'Jua',sans-serif;font-size:15px;font-weight:400;color:#1F2937;line-height:1.2}
+.action-card .desc{font-size:11px;color:#6B7280;font-weight:600;margin-top:1px}
+
+/* ════════ 전체동사 리스트 ════════ */
+.verb-list{display:flex;flex-direction:column;gap:8px}
+.verb-row{background:white;border:1.5px solid #EDE9FE;border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:10px;transition:all .15s}
+.verb-row:hover{border-color:#8B5CF6;box-shadow:0 4px 14px rgba(139,92,246,.1)}
+.verb-row .vnum{background:#F5F3FF;color:#7C3AED;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;flex-shrink:0}
+.verb-row .vbody{flex:1;min-width:0}
+.verb-row .vforms{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.verb-row .vform{font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;color:#7C3AED}
+.verb-row .varrow{color:#9CA3AF;font-size:11px;font-weight:800}
+.verb-row .vkor{font-size:11.5px;color:#6B7280;font-weight:600;margin-top:3px}
+.verb-row .spk{background:transparent;border:none;cursor:pointer;font-size:18px;color:#06B6D4;padding:4px;flex-shrink:0}
+.verb-row .spk:hover{transform:scale(1.15)}
+
+/* ════════ 학습 카드 ════════ */
+.study-bar{background:rgba(139,92,246,.08);border:1.5px solid rgba(139,92,246,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sbar-lbl{color:#7C3AED;font-family:'Jua',sans-serif;font-weight:400;font-size:12.5px;flex-shrink:0}
+.sbar-track{flex:1;height:8px;background:rgba(139,92,246,.18);border-radius:4px;overflow:hidden}
+.sbar-fill{height:100%;background:linear-gradient(90deg,#8B5CF6,#06B6D4);transition:width .3s;border-radius:4px}
+.sbar-cnt{color:#7C3AED;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;flex-shrink:0}
+
+.study-actions{display:flex;gap:8px;margin-top:14px}
+.sa-stop{flex:1;padding:11px;background:rgba(239,68,68,.1);color:#DC2626;border:1.5px solid rgba(239,68,68,.3);border-radius:11px;font-family:'Jua',sans-serif;font-size:14px;font-weight:400;cursor:pointer}
+.sa-stop:hover{background:rgba(239,68,68,.18)}
+.sa-next{flex:2;padding:11px;background:rgba(139,92,246,.1);color:#7C3AED;border:1.5px solid rgba(139,92,246,.3);border-radius:11px;font-family:'Jua',sans-serif;font-size:14px;font-weight:400;cursor:pointer;transition:all .15s}
+.sa-next:disabled{opacity:.5;cursor:not-allowed}
+.sa-next:not(:disabled):hover{background:rgba(139,92,246,.2)}
+
+.verb-card{background:linear-gradient(180deg,white,#F5F3FF);border:2px solid #DDD6FE;border-radius:22px;padding:24px 20px;text-align:center;box-shadow:0 10px 32px rgba(139,92,246,.12)}
+.vc-num{color:#9CA3AF;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;margin-bottom:14px}
+.vc-form{padding:14px 0;border-bottom:1px dashed #E5E7EB;position:relative}
+.vc-form:last-child{border-bottom:none}
+.vc-form-lbl{font-size:11px;color:#7C3AED;font-weight:800;letter-spacing:.5px;margin-bottom:5px;font-family:'Nunito',sans-serif}
+.vc-form-en{font-family:'Nunito',sans-serif;font-weight:900;font-size:30px;color:#1F2937;letter-spacing:-.5px;line-height:1.15}
+.vc-form-pron{font-family:'Nunito',sans-serif;font-size:14px;color:#6B7280;font-weight:600;margin-top:3px}
+.vc-form-spk{position:absolute;right:0;top:50%;transform:translateY(-50%);background:rgba(6,182,212,.12);border:1.5px solid rgba(6,182,212,.4);color:#0891B2;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.vc-form-spk:hover{background:#06B6D4;color:white;transform:translateY(-50%) scale(1.08)}
+.vc-kor{margin-top:14px;font-size:15px;color:#7C3AED;font-weight:700;font-family:'Jua',sans-serif}
+
+/* ════════ 테스트 ════════ */
+.test-prompt{background:linear-gradient(135deg,#ECFEFF,#CFFAFE);border:2px solid #67E8F9;border-radius:18px;padding:22px 18px;text-align:center}
+.tp-badge{display:inline-block;background:#06B6D4;color:white;font-size:11px;font-weight:800;padding:4px 12px;border-radius:8px;margin-bottom:12px;font-family:'Nunito',sans-serif;letter-spacing:.5px}
+.tp-base{font-family:'Nunito',sans-serif;font-weight:900;font-size:38px;color:#0E7490;letter-spacing:-.5px;line-height:1.1;text-shadow:0 0 20px rgba(6,182,212,.3);position:relative}
+.tp-base-spk{background:transparent;border:none;color:#06B6D4;font-size:22px;cursor:pointer;margin-left:8px;vertical-align:middle}
+.tp-pron{font-family:'Nunito',sans-serif;font-size:14px;color:#0891B2;font-weight:600;margin-top:4px}
+.tp-kor{font-size:14px;color:#374151;font-weight:700;margin-top:8px}
+
+.test-inputs{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.test-row{display:flex;flex-direction:column;gap:5px}
+.test-row label{font-size:12px;color:#7C3AED;font-weight:800;font-family:'Jua',sans-serif;padding-left:4px;display:flex;align-items:center;gap:6px}
+.test-row label .tag{background:#8B5CF6;color:white;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px}
+.test-inp{padding:14px 16px;border-radius:13px;border:2px solid #DDD6FE;background:white;font-size:18px;font-weight:900;font-family:'Nunito',sans-serif;color:#1F2937;outline:none;transition:all .15s;text-align:center;letter-spacing:.5px}
+.test-inp::placeholder{color:#D1D5DB;font-weight:600;font-size:14px;letter-spacing:0}
+.test-inp:focus{border-color:#8B5CF6;background:#FAF5FF;box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+.test-inp.ok{border-color:#10B981;background:#ECFDF5;color:#047857}
+.test-inp.ng{border-color:#EF4444;background:#FEF2F2;color:#DC2626}
+.test-sub{margin-top:6px;padding:14px;background:linear-gradient(135deg,#8B5CF6,#7C3AED);color:white;border:none;border-radius:13px;font-family:'Jua',sans-serif;font-size:16px;font-weight:400;cursor:pointer;box-shadow:0 6px 18px rgba(139,92,246,.35)}
+.test-sub:hover{box-shadow:0 8px 24px rgba(139,92,246,.45);transform:translateY(-1px)}
+.test-sub:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.test-result{margin-top:14px;border-radius:14px;padding:14px;text-align:center;animation:fadeIn .25s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tr-ok{background:linear-gradient(135deg,#10B981,#059669);color:white;box-shadow:0 6px 20px rgba(16,185,129,.35)}
+.tr-ng{background:linear-gradient(135deg,#EF4444,#DC2626);color:white;box-shadow:0 6px 20px rgba(239,68,68,.35)}
+.tr-icon{font-size:32px;margin-bottom:6px}
+.tr-title{font-family:'Jua',sans-serif;font-weight:400;font-size:18px;margin-bottom:4px}
+.tr-answer{background:rgba(255,255,255,.95);color:#1F2937;border-radius:10px;padding:8px 12px;margin-top:8px;display:inline-block;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px}
+.tr-answer .lbl{color:#9CA3AF;font-size:10.5px;font-weight:700;margin-right:6px}
+
+.test-progress{margin-top:14px;display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(6,182,212,.08);border-radius:11px;border:1px solid rgba(6,182,212,.25)}
+.tp-track{flex:1;height:7px;background:rgba(6,182,212,.18);border-radius:4px;overflow:hidden}
+.tp-fill{height:100%;background:linear-gradient(90deg,#06B6D4,#22D3EE);border-radius:4px;transition:width .3s}
+.tp-cnt{color:#0891B2;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px}
+
+/* 완료 화면 */
+.test-end{background:linear-gradient(135deg,#8B5CF6 0%,#06B6D4 50%,#F59E0B 100%);border-radius:22px;padding:30px 24px;color:white;text-align:center;box-shadow:0 14px 40px rgba(124,58,237,.4)}
+.te-icon{font-size:60px;margin-bottom:10px}
+.te-title{font-family:'Jua',sans-serif;font-size:22px;font-weight:400;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.te-sub{font-size:13px;font-weight:600;opacity:.95;margin-bottom:18px}
+.te-btn{display:inline-block;margin:5px;padding:12px 22px;background:rgba(255,255,255,.95);color:#7C3AED;border:none;border-radius:12px;font-family:'Jua',sans-serif;font-size:14px;font-weight:400;cursor:pointer;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.te-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.15)}
+
+/* 틀린단어 */
+.wrong-filter{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.wf-btn{padding:9px 4px;background:white;border:1.5px solid #E5E7EB;color:#6B7280;font-family:'Jua',sans-serif;font-size:12px;font-weight:400;border-radius:10px;cursor:pointer;transition:all .15s}
+.wf-btn:hover:not(.on){background:#F3F4F6}
+.wf-btn.on{background:linear-gradient(135deg,#EF4444,#DC2626);color:white;border-color:#DC2626;box-shadow:0 4px 12px rgba(239,68,68,.3)}
+
+.wrong-summary{background:linear-gradient(135deg,#FEE2E2,#FECACA);border:2px solid #FCA5A5;border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.ws-icon{font-size:32px}
+.ws-text{flex:1}
+.ws-text .big{font-family:'Jua',sans-serif;font-size:16px;color:#991B1B;font-weight:400}
+.ws-text .small{font-size:11.5px;color:#7F1D1D;font-weight:600;margin-top:1px}
+.ws-btn{padding:9px 14px;background:#DC2626;color:white;border:none;border-radius:10px;font-family:'Jua',sans-serif;font-size:13px;font-weight:400;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,.3)}
+.ws-btn:hover{background:#B91C1C}
+
+.wrong-empty{text-align:center;padding:40px 20px;color:#9CA3AF;font-size:13px;font-weight:600}
+.wrong-empty .ei{font-size:48px;margin-bottom:8px}
+
+/* 비어있을 때 */
+.empty{text-align:center;padding:60px 20px;color:#9CA3AF}
+.empty .icon{font-size:56px;margin-bottom:10px}
+.empty .msg{font-size:14px;font-weight:600}
+
+/* 로딩 */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid #DDD6FE;border-top-color:#7C3AED;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:380px){
+  .vc-form-en{font-size:26px}
+  .tp-base{font-size:32px}
+  .wrong-filter{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ 로그인 화면 ════════ -->
+<div class="ov ov-purple" id="loginOv">
+  <div class="mascot">⭐</div>
+  <div class="ov-logo">Star-Words</div>
+  <div class="class-badge">⭐ 스타 워즈 - 동사3단 변화</div>
+  <h2>안녕! 친구야 👋</h2>
+  <div class="sub">이름을 입력하고 학년을 선택해주세요</div>
+  <input class="name-inp" id="nameInp" placeholder="이름을 입력하세요" maxlength="10" autocomplete="off">
+  <div class="type-select">
+    <div class="type-opt" data-type="초등" onclick="selectType('초등')">🌈 초등</div>
+    <div class="type-opt" data-type="중등" onclick="selectType('중등')">🌑 중등</div>
+  </div>
+  <div class="err" id="err"></div>
+  <button class="go-btn" id="goBtn" onclick="goLogin()">시작하기 🚀</button>
+  <div class="loading" id="loadingMsg" style="display:none">단어를 불러오는 중... <span class="spin"></span></div>
+</div>
+
+<!-- ════════ 메인 앱 ════════ -->
+<div class="app" id="app" style="display:none">
+
+  <!-- 헤더 -->
+  <div class="hd">
+    <div class="hd-logo">GnB</div>
+    <div class="hd-info">
+      <div class="t1">GnB연세스타 권곡캠퍼스</div>
+      <div class="t2">⭐ Star-Words 동사3단 ✨</div>
+    </div>
+    <span class="stu-badge" id="stuBadge"><span class="live-dot"></span><span id="stuName"></span></span>
+  </div>
+  <div class="book-lbl" id="bookLbl">⭐ 동사3단 변화 학습 — 단어는 저금이에요!</div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('home')">🏠 홈</button>
+    <button class="tab" onclick="goTab('all')">📖 전체동사</button>
+    <button class="tab" onclick="goTab('study')">📝 3단학습</button>
+    <button class="tab" onclick="goTab('test')">🎯 3단테스트</button>
+    <button class="tab" onclick="goTab('wrong')">❌ 틀린단어</button>
+  </div>
+
+  <main id="main"></main>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// 환경 변수
+// ════════════════════════════════════════════════════════════════
+const GS_URL = '/api/verb_3_stu';
+const APP_KEY = 'gnb_star_words_v1';
+
+// ════════════════════════════════════════════════════════════════
+// 상태 변수
+// ════════════════════════════════════════════════════════════════
+let studentName = '';
+let studentType = '';   // '초등' or '중등'
+let sessionId = '';
+let sessionStartTs = 0;
+
+let VDB = [];           // 동사 데이터베이스
+let currentTab = 'home';
+
+// 학습 (3단변화학습)
+let studyList = [], studyI = 0, studyT = null, nextBtnT = null;
+let studyDone = false;
+
+// 테스트 (3단변화테스트)
+let testQueue = [], testCurrentIdx = -1, testTotal = 0, testCorrect = 0;
+let testWaitingNext = false, testWrongSet = new Set();
+
+// 로그 카운트
+let logCounts = { allVerbs:0, study3:0, test3:0, wrongStudy:0 };
+
+// 틀린단어 모드
+let wrongMode = false;
+let wrongDays = 1;
+
+// ════════════════════════════════════════════════════════════════
+// 유틸: localStorage, JSONP, esc
+// ════════════════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function saveLocal(k,v){try{localStorage.setItem(APP_KEY+'_'+k,JSON.stringify(v))}catch(e){}}
+function loadLocal(k){try{const x=localStorage.getItem(APP_KEY+'_'+k);return x?JSON.parse(x):null}catch(e){return null}}
+
+// JSONP 호출 (CORS 우회)
+function jsonp(params, timeoutMs=15000){
+  return new Promise((resolve,reject)=>{
+    const cb = 'cb_'+Date.now()+'_'+Math.floor(Math.random()*99999);
+    const url = GS_URL + '?' + new URLSearchParams({...params,callback:cb}).toString();
+    const s = document.createElement('script');
+    let done = false;
+    const cleanup = ()=>{
+      if(done)return;done=true;
+      try{delete window[cb]}catch(e){window[cb]=undefined}
+      if(s.parentNode)s.parentNode.removeChild(s);
+      clearTimeout(t);
+    };
+    window[cb] = (data)=>{cleanup();resolve(data)};
+    s.onerror = ()=>{cleanup();reject(new Error('JSONP load error'))};
+    const t = setTimeout(()=>{cleanup();reject(new Error('timeout'))},timeoutMs);
+    s.src = url;
+    document.head.appendChild(s);
+  });
+}
+async function jsonpRetry(params, maxRetry=3){
+  let lastErr;
+  for(let i=0;i<maxRetry;i++){
+    try{return await jsonp(params)}
+    catch(e){lastErr=e;await new Promise(r=>setTimeout(r,500*(i+1)))}
+  }
+  throw lastErr;
+}
+
+// ════════════════════════════════════════════
+// 🍎 iOS 발음 잠금 해제 (Speech Unlock)
+// ════════════════════════════════════════════
+let _speechUnlocked = false;
+function unlockSpeech() {
+  if (_speechUnlocked) return;
+  if (!('speechSynthesis' in window)) return;
+  try {
+    // 무음 utterance를 한 번 실행 → iOS는 이후 자동 재생 허용
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    u.rate = 1;
+    speechSynthesis.speak(u);
+    _speechUnlocked = true;
+    console.log('🔓 Speech unlocked for iOS');
+  } catch(e) {
+    console.warn('Speech unlock failed:', e);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// 효과음 (Web Audio)
+// ════════════════════════════════════════════════════════════════
+let audioCtx = null;
+function ensureAudio(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}return audioCtx}
+function playCorrect(){
+  const ctx = ensureAudio();if(!ctx)return;
+  const now = ctx.currentTime;
+  [523.25, 659.25, 783.99].forEach((freq,i)=>{
+    const osc = ctx.createOscillator();const g = ctx.createGain();
+    osc.type='sine';osc.frequency.value=freq;
+    osc.connect(g);g.connect(ctx.destination);
+    g.gain.setValueAtTime(.0001,now+i*.12);
+    g.gain.exponentialRampToValueAtTime(.18,now+i*.12+.02);
+    g.gain.exponentialRampToValueAtTime(.0001,now+i*.12+.18);
+    osc.start(now+i*.12);osc.stop(now+i*.12+.2);
+  });
+}
+function playWrong(){
+  const ctx = ensureAudio();if(!ctx)return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();const g = ctx.createGain();
+  osc.type='square';osc.frequency.value=220;
+  osc.connect(g);g.connect(ctx.destination);
+  g.gain.setValueAtTime(.0001,now);
+  g.gain.exponentialRampToValueAtTime(.12,now+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,now+.45);
+  osc.start(now);osc.stop(now+.5);
+}
+
+// ════════════════════════════════════════════
+// Back 눌러서 index로 돌아가는 것 방지
+// ════════════════════════════════════════════
+window.addEventListener('beforeunload', function(e){
+  // 로그인 후(학습 중)에만 경고
+  if(document.getElementById('loginOv').style.display === 'none'){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// ════════════════════════════════════════════════════════════════
+// 음성 발음 (Speech Synthesis)
+// ════════════════════════════════════════════════════════════════
+let speechReady = false;
+function unlockSpeech(){
+  if(speechReady)return;
+  try{
+    const u = new SpeechSynthesisUtterance('');
+    u.volume = 0;speechSynthesis.speak(u);speechSynthesis.cancel();
+    speechReady = true;
+  }catch(e){}
+}
+function speak(text, rate=0.9){
+  if(!text)return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='en-US';u.rate=rate;u.pitch=1;u.volume=1;
+    speechSynthesis.speak(u);
+  }catch(e){console.warn('speech error',e)}
+}
+function speakSequence(words, gap=1000){
+  return new Promise(resolve=>{
+    let i = 0;
+    const next = ()=>{
+      if(i>=words.length){resolve();return}
+      speak(words[i]);
+      i++;
+      setTimeout(next, gap + (words[i-1].length*60));
+    };
+    next();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// 로그인
+// ════════════════════════════════════════════════════════════════
+function selectType(t){
+  studentType = t;
+  document.querySelectorAll('.type-opt').forEach(el=>{
+    el.classList.toggle('on', el.dataset.type===t);
+  });
+  document.getElementById('err').textContent = '';
+}
+
+async function goLogin(){
+  const nameInp = document.getElementById('nameInp');
+  const errEl = document.getElementById('err');
+  const goBtn = document.getElementById('goBtn');
+  const loadingMsg = document.getElementById('loadingMsg');
+
+  const name = nameInp.value.trim();
+  if(!name){errEl.textContent='이름을 입력해주세요';nameInp.focus();return}
+  if(!studentType){errEl.textContent='초등 또는 중등을 선택해주세요';return}
+
+  errEl.textContent='';
+  goBtn.disabled = true;
+  loadingMsg.style.display = 'block';
+  unlockSpeech();ensureAudio();
+
+  studentName = name;
+  sessionStartTs = Date.now();
+
+  try{
+    // 1. 단어장 불러오기
+    const wordsRes = await jsonpRetry({action:'getWords', studentType:studentType});
+    if(!wordsRes.success){throw new Error(wordsRes.error||'단어장 로드 실패')}
+    VDB = wordsRes.words || [];
+    if(VDB.length===0){
+      errEl.textContent = `${studentType} 활성 단어가 없어요. 선생님에게 문의해주세요.`;
+      goBtn.disabled=false;loadingMsg.style.display='none';return;
+    }
+    saveLocal('vdb_'+studentType, VDB);
+
+    // 2. 학습 세션 시작 (학습로그 기록)
+    sessionId = 's_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
+    saveLocal('session', {sessionId, name:studentName, studentType, ts:sessionStartTs});
+    jsonpRetry({action:'saveLog', name:studentName, studentType:studentType, sessionId:sessionId}).catch(e=>console.warn('saveLog',e));
+
+    // 3. 화면 전환
+    document.getElementById('loginOv').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('stuName').textContent = studentName;
+    document.getElementById('stuBadge').style.display = 'inline-flex';
+    goTab('home');
+  }catch(e){
+    console.error(e);
+    errEl.textContent = '서버 연결 오류 — 잠시 후 다시 시도해주세요';
+    goBtn.disabled = false;loadingMsg.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// 탭 전환
+// ════════════════════════════════════════════════════════════════
+function goTab(t){
+  currentTab = t;
+  stopStudy();
+  testWaitingNext = false;
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    const tabs = ['home','all','study','test','wrong'];
+    el.classList.toggle('on', tabs[i]===t);
+  });
+  const main = document.getElementById('main');
+  if(t==='home') renderHome();
+  else if(t==='all') renderAllVerbs();
+  else if(t==='study') renderStudyStart();
+  else if(t==='test') renderTestStart();
+  else if(t==='wrong') renderWrongTab();
+}
+
+// ════════════════════════════════════════════════════════════════
+// 홈 탭
+// ════════════════════════════════════════════════════════════════
+function renderHome(){
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="home-banner">
+      <h2><span class="name-hl">${esc(studentName)}</span>님! 🌟</h2>
+      <div class="sub-msg">오늘도 동사 3단 변화로 영어 실력을 쌓아봐요!</div>
+    </div>
+    <div class="sec">⭐ 학습 메뉴 <span class="sec-lbl">${VDB.length}개 동사 준비됨</span></div>
+    <div class="action-grid">
+      <div class="action-card purple" onclick="goTab('all')">
+        <div class="ico">📖</div>
+        <div class="nm">전체 동사</div>
+        <div class="desc">모든 단어 둘러보기</div>
+      </div>
+      <div class="action-card cyan" onclick="goTab('study')">
+        <div class="ico">📝</div>
+        <div class="nm">3단변화 학습</div>
+        <div class="desc">발음으로 외우기</div>
+      </div>
+      <div class="action-card amber" onclick="goTab('test')">
+        <div class="ico">🎯</div>
+        <div class="nm">3단변화 테스트</div>
+        <div class="desc">정답 맞추기</div>
+      </div>
+      <div class="action-card red" onclick="goTab('wrong')">
+        <div class="ico">❌</div>
+        <div class="nm">틀린 단어 다시</div>
+        <div class="desc">복습 학습</div>
+      </div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// 전체동사 탭
+// ════════════════════════════════════════════════════════════════
+function renderAllVerbs(){
+  const main = document.getElementById('main');
+  if(VDB.length===0){
+    main.innerHTML = `<div class="empty"><div class="icon">📭</div><div class="msg">활성 동사가 없어요</div></div>`;
+    return;
+  }
+  // 학습로그 카운트 +1
+  logCounts.allVerbs++;
+  pushLogUpdate();
+
+  const rows = VDB.map((v,i)=>`
+    <div class="verb-row">
+      <div class="vnum">${i+1}</div>
+      <div class="vbody">
+        <div class="vforms">
+          <span class="vform">${esc(v.base)}</span><span class="varrow">▸</span>
+          <span class="vform">${esc(v.past)}</span><span class="varrow">▸</span>
+          <span class="vform">${esc(v.pp)}</span>
+        </div>
+        <div class="vkor">${esc(v.kor)} ${v.pron1?`<span style="color:#9CA3AF;margin-left:6px">${esc(v.pron1)} ${esc(v.pron2)} ${esc(v.pron3)}</span>`:''}</div>
+      </div>
+      <button class="spk" onclick="speakSequence(['${esc(v.base)}','${esc(v.past)}','${esc(v.pp)}'])">🔊</button>
+    </div>
+  `).join('');
+  main.innerHTML = `<div class="sec">📖 전체 동사 <span class="sec-lbl">${VDB.length}개</span></div><div class="verb-list">${rows}</div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// 3단변화 학습 탭 (자동 발음 + 7초/12초)
+// ════════════════════════════════════════════════════════════════
+function renderStudyStart(){
+  if(VDB.length===0){
+    document.getElementById('main').innerHTML = `<div class="empty"><div class="icon">📭</div><div class="msg">활성 동사가 없어요</div></div>`;
+    return;
+  }
+  studyList = [...VDB];
+  studyI = 0;
+  studyDone = false;
+  wrongMode = false;
+  showStudyCard();
+  // 학습로그 +1
+  logCounts.study3++;
+  pushLogUpdate();
+}
+
+function showStudyCard(){
+  if(studyI>=studyList.length){endStudy();return}
+  const v = studyList[studyI];
+  const main = document.getElementById('main');
+  const progress = ((studyI+1)/studyList.length*100).toFixed(0);
+
+  main.innerHTML = `
+    <div class="study-bar">
+      <div class="sbar-lbl">📝 학습</div>
+      <div class="sbar-track"><div class="sbar-fill" style="width:${progress}%"></div></div>
+      <div class="sbar-cnt">${studyI+1}/${studyList.length}</div>
+    </div>
+    <div class="verb-card">
+      <div class="vc-num">단어 ${studyI+1}</div>
+      <div class="vc-form">
+        <div class="vc-form-lbl">동사원형 (Base)</div>
+        <div class="vc-form-en">${esc(v.base)}</div>
+        ${v.pron1?`<div class="vc-form-pron">${esc(v.pron1)}</div>`:''}
+        <button class="vc-form-spk" onclick="speak('${esc(v.base)}')">🔊</button>
+      </div>
+      <div class="vc-form">
+        <div class="vc-form-lbl">과거형 (Past)</div>
+        <div class="vc-form-en">${esc(v.past)}</div>
+        ${v.pron2?`<div class="vc-form-pron">${esc(v.pron2)}</div>`:''}
+        <button class="vc-form-spk" onclick="speak('${esc(v.past)}')">🔊</button>
+      </div>
+      <div class="vc-form">
+        <div class="vc-form-lbl">과거분사 (Past Participle)</div>
+        <div class="vc-form-en">${esc(v.pp)}</div>
+        ${v.pron3?`<div class="vc-form-pron">${esc(v.pron3)}</div>`:''}
+        <button class="vc-form-spk" onclick="speak('${esc(v.pp)}')">🔊</button>
+      </div>
+      <div class="vc-kor">${esc(v.kor)}</div>
+    </div>
+    <div class="study-actions">
+      <button class="sa-stop" onclick="stopStudy();goTab('home')">⏸️ 중단</button>
+      <button class="sa-next" id="nextBtn" disabled onclick="nextStudy()">⏳ <span id="nextCnt">7</span>초 후 다음</button>
+    </div>
+  `;
+
+  // 자동 발음: 원형 → 1초 → 과거 → 1초 → 과거분사 (한 번)
+  setTimeout(()=>speakSequence([v.base, v.past, v.pp], 1000), 300);
+
+  // 7초 후 다음 버튼 활성화 카운트다운
+  let remaining = 7;
+  if(nextBtnT) clearInterval(nextBtnT);
+  nextBtnT = setInterval(()=>{
+    remaining--;
+    const cnt = document.getElementById('nextCnt');
+    const btn = document.getElementById('nextBtn');
+    if(!btn){clearInterval(nextBtnT);return}
+    if(remaining<=0){
+      clearInterval(nextBtnT);
+      btn.disabled = false;
+      btn.innerHTML = '▶ 다음 단어';
+    } else {
+      if(cnt) cnt.textContent = remaining;
+    }
+  },1000);
+
+  // 12초 자동 진행
+  if(studyT) clearTimeout(studyT);
+  studyT = setTimeout(()=>{nextStudy()}, 12000);
+}
+
+function nextStudy(){
+  if(studyT){clearTimeout(studyT);studyT=null}
+  if(nextBtnT){clearInterval(nextBtnT);nextBtnT=null}
+  studyI++;
+  if(studyI>=studyList.length){endStudy();return}
+  showStudyCard();
+}
+
+function stopStudy(){
+  if(studyT){clearTimeout(studyT);studyT=null}
+  if(nextBtnT){clearInterval(nextBtnT);nextBtnT=null}
+  try{speechSynthesis.cancel()}catch(e){}
+}
+
+function endStudy(){
+  stopStudy();
+  studyDone = true;
+  document.getElementById('main').innerHTML = `
+    <div class="test-end">
+      <div class="te-icon">🌟</div>
+      <div class="te-title">학습 완료!</div>
+      <div class="te-sub">${studyList.length}개 동사 3단변화 학습 완료 ⭐</div>
+      <button class="te-btn" onclick="goTab('test')">🎯 테스트 도전</button>
+      <button class="te-btn" onclick="goTab('home')">🏠 홈으로</button>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// 3단변화 테스트 탭
+// ════════════════════════════════════════════════════════════════
+function renderTestStart(){
+  if(VDB.length===0){
+    document.getElementById('main').innerHTML = `<div class="empty"><div class="icon">📭</div><div class="msg">활성 동사가 없어요</div></div>`;
+    return;
+  }
+  // 셔플 큐 (틀린 단어는 다시 등장)
+  testQueue = [...VDB];
+  // Fisher-Yates 셔플
+  for(let i=testQueue.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [testQueue[i],testQueue[j]] = [testQueue[j],testQueue[i]];
+  }
+  testTotal = testQueue.length;
+  testCorrect = 0;
+  testWrongSet = new Set();
+  testCurrentIdx = -1;
+  testWaitingNext = false;
+  logCounts.test3++;
+  pushLogUpdate();
+  showTestCard();
+}
+
+function showTestCard(){
+  if(testQueue.length===0){endTest();return}
+  testCurrentIdx = 0;
+  const v = testQueue[0];
+  const main = document.getElementById('main');
+  const remainingCount = testQueue.length;
+  const doneCount = testTotal - remainingCount + testCorrect;
+  const progress = (testCorrect/testTotal*100).toFixed(0);
+
+  main.innerHTML = `
+    <div class="test-prompt">
+      <div class="tp-badge">🎯 동사원형</div>
+      <div class="tp-base">${esc(v.base)} <button class="tp-base-spk" onclick="speak('${esc(v.base)}')">🔊</button></div>
+      ${v.pron1?`<div class="tp-pron">${esc(v.pron1)}</div>`:''}
+      <div class="tp-kor">— ${esc(v.kor)} —</div>
+    </div>
+    <div class="test-inputs">
+      <div class="test-row">
+        <label><span class="tag">과거형</span> Past</label>
+        <input class="test-inp" id="inpPast" placeholder="과거형을 입력하세요" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="test-row">
+        <label><span class="tag">과거분사</span> Past Participle</label>
+        <input class="test-inp" id="inpPP" placeholder="과거분사를 입력하세요" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+      </div>
+      <button class="test-sub" id="submitBtn" onclick="submitTest()">✓ 정답 확인</button>
+    </div>
+    <div id="resultBox"></div>
+    <div class="test-progress">
+      <div class="tp-track"><div class="tp-fill" style="width:${progress}%"></div></div>
+      <div class="tp-cnt">✓ ${testCorrect} / ${testTotal} · 남은: ${remainingCount}</div>
+    </div>
+  `;
+  setTimeout(()=>document.getElementById('inpPast')?.focus(),100);
+  // Enter 키 처리
+  const past = document.getElementById('inpPast');
+  const pp = document.getElementById('inpPP');
+  past.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();pp.focus()}});
+  pp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitTest()}});
+}
+
+function submitTest(){
+  if(testWaitingNext)return;
+  const v = testQueue[0];
+  if(!v)return;
+  const past = (document.getElementById('inpPast').value||'').trim().toLowerCase();
+  const pp = (document.getElementById('inpPP').value||'').trim().toLowerCase();
+  if(!past || !pp){
+    document.getElementById('resultBox').innerHTML = '<div style="color:#DC2626;font-weight:700;text-align:center;margin-top:10px;font-size:13px">두 칸을 모두 입력해주세요</div>';
+    return;
+  }
+  const okPast = past === v.past.toLowerCase();
+  const okPP = pp === v.pp.toLowerCase();
+  const allOk = okPast && okPP;
+
+  document.getElementById('inpPast').classList.add(okPast?'ok':'ng');
+  document.getElementById('inpPP').classList.add(okPP?'ok':'ng');
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('inpPast').disabled = true;
+  document.getElementById('inpPP').disabled = true;
+
+  if(allOk){
+    playCorrect();
+    testCorrect++;
+    document.getElementById('resultBox').innerHTML = `
+      <div class="test-result tr-ok">
+        <div class="tr-icon">🎉</div>
+        <div class="tr-title">딩동! 정답이에요</div>
+      </div>
+    `;
+    testQueue.shift(); // 큐에서 제거
+    testWaitingNext = true;
+    setTimeout(()=>{testWaitingNext=false;showTestCard()}, 1200);
+  } else {
+    playWrong();
+    testWrongSet.add(v.base.toLowerCase());
+    document.getElementById('resultBox').innerHTML = `
+      <div class="test-result tr-ng">
+        <div class="tr-icon">😢</div>
+        <div class="tr-title">아쉬워요! 다시 도전</div>
+        <div class="tr-answer"><span class="lbl">과거형</span>${esc(v.past)}</div>
+        <div class="tr-answer"><span class="lbl">과거분사</span>${esc(v.pp)}</div>
+      </div>
+    `;
+    // 틀린 단어 기록 (Apps Script)
+    jsonpRetry({
+      action:'recordWrong',
+      name:studentName,
+      studentType:studentType,
+      base:v.base, past:v.past, pp:v.pp
+    }).catch(e=>console.warn('recordWrong',e));
+    // 큐 뒤로 다시 추가 (재도전)
+    testQueue.shift();
+    testQueue.push(v);
+    testWaitingNext = true;
+    setTimeout(()=>{testWaitingNext=false;showTestCard()}, 4000);
+  }
+}
+
+function endTest(){
+  const main = document.getElementById('main');
+  const wrongCnt = testWrongSet.size;
+  const msg = wrongCnt===0
+    ? '한 번에 다 맞췄어요! 🏆'
+    : `재도전 후 모두 맞췄어요! (${wrongCnt}개 단어 재시도)`;
+  main.innerHTML = `
+    <div class="test-end">
+      <div class="te-icon">🏆</div>
+      <div class="te-title">테스트 완료!</div>
+      <div class="te-sub">${msg}</div>
+      <button class="te-btn" onclick="goTab('wrong')">❌ 틀린단어 복습</button>
+      <button class="te-btn" onclick="goTab('home')">🏠 홈으로</button>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// 틀린단어 다시보기 탭
+// ════════════════════════════════════════════════════════════════
+function renderWrongTab(){
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="sec">❌ 틀린단어 다시보기 <span class="sec-lbl">기간을 선택하세요</span></div>
+    <div class="wrong-filter">
+      <button class="wf-btn ${wrongDays===1?'on':''}" onclick="setWrongDays(1)">📅 오늘</button>
+      <button class="wf-btn ${wrongDays===3?'on':''}" onclick="setWrongDays(3)">🗓️ 3일</button>
+      <button class="wf-btn ${wrongDays===7?'on':''}" onclick="setWrongDays(7)">📆 1주일</button>
+      <button class="wf-btn ${wrongDays===30?'on':''}" onclick="setWrongDays(30)">🗓️ 한 달</button>
+    </div>
+    <div id="wrongContent"><div class="empty"><div class="icon">⏳</div><div class="msg">불러오는 중...</div></div></div>
+  `;
+  loadWrongs();
+}
+
+function setWrongDays(d){
+  wrongDays = d;
+  document.querySelectorAll('.wf-btn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  loadWrongs();
+}
+
+async function loadWrongs(){
+  const box = document.getElementById('wrongContent');
+  try{
+    const res = await jsonpRetry({
+      action:'getMyWrongs',
+      name:studentName,
+      studentType:studentType,
+      days:wrongDays
+    });
+    const wrongs = res.wrongs || [];
+    if(wrongs.length===0){
+      box.innerHTML = `<div class="wrong-empty"><div class="ei">🎉</div>이 기간 동안 틀린 단어가 없어요!<br><span style="font-size:11.5px;color:#06B6D4;margin-top:6px;display:block">계속 잘하고 있어요 ⭐</span></div>`;
+      return;
+    }
+    // 중복 제거 (동사원형 기준)
+    const merged = {};
+    wrongs.forEach(w=>{
+      const k = (w.base||'').toLowerCase();
+      if(!k)return;
+      if(!merged[k]){merged[k]={...w,count:0}}
+      merged[k].count += w.count||1;
+    });
+    const list = Object.values(merged).sort((a,b)=>b.count-a.count);
+    const periodLbl = {1:'오늘',3:'최근 3일',7:'최근 1주일',30:'최근 한 달'}[wrongDays];
+
+    let html = `
+      <div class="wrong-summary">
+        <div class="ws-icon">⚠️</div>
+        <div class="ws-text">
+          <div class="big">${list.length}개 틀린 동사</div>
+          <div class="small">${periodLbl} · 다시 도전!</div>
+        </div>
+        <button class="ws-btn" onclick="startWrongTest()">🎯 다시 테스트</button>
+      </div>
+      <div class="verb-list">
+    `;
+    list.forEach((w,i)=>{
+      html += `
+        <div class="verb-row">
+          <div class="vnum">${i+1}</div>
+          <div class="vbody">
+            <div class="vforms">
+              <span class="vform">${esc(w.base)}</span><span class="varrow">▸</span>
+              <span class="vform">${esc(w.past)}</span><span class="varrow">▸</span>
+              <span class="vform">${esc(w.pp)}</span>
+            </div>
+            <div class="vkor">오답 ${w.count}회 · ${esc(w.date||'')}</div>
+          </div>
+          <button class="spk" onclick="speakSequence(['${esc(w.base)}','${esc(w.past)}','${esc(w.pp)}'])">🔊</button>
+        </div>
+      `;
+    });
+    html += '</div>';
+    box.innerHTML = html;
+    // 틀린단어 큐 저장 (재테스트용)
+    window._wrongTestQueue = list.map(w=>{
+      // VDB와 매칭해서 발음기호 보충
+      const m = VDB.find(v=>v.base.toLowerCase()===w.base.toLowerCase());
+      return m || {base:w.base, past:w.past, pp:w.pp, kor:'', pron1:'', pron2:'', pron3:''};
+    });
+  }catch(e){
+    console.error(e);
+    box.innerHTML = `<div class="empty"><div class="icon">⚠️</div><div class="msg">불러오기 실패 — 다시 시도해주세요</div></div>`;
+  }
+}
+
+function startWrongTest(){
+  const q = window._wrongTestQueue || [];
+  if(q.length===0)return;
+  testQueue = [...q];
+  testTotal = testQueue.length;
+  testCorrect = 0;
+  testWrongSet = new Set();
+  wrongMode = true;
+  logCounts.wrongStudy++;
+  pushLogUpdate();
+  showTestCard();
+}
+
+// ════════════════════════════════════════════════════════════════
+// 학습로그 업데이트 (서버에)
+// ════════════════════════════════════════════════════════════════
+let logPushTimer = null;
+function pushLogUpdate(){
+  if(logPushTimer) clearTimeout(logPushTimer);
+  logPushTimer = setTimeout(()=>{
+    const duration = Math.floor((Date.now()-sessionStartTs)/1000);
+    jsonpRetry({
+      action:'updateLog',
+      sessionId:sessionId,
+      duration:duration+'초',
+      allVerbs:logCounts.allVerbs+'',
+      study3:logCounts.study3+'',
+      test3:logCounts.test3+'',
+      wrongStudy:logCounts.wrongStudy+''
+    }).catch(e=>console.warn('updateLog',e));
+  }, 1500);
+}
+
+// 페이지 떠날 때 최종 업데이트 (sendBeacon)
+window.addEventListener('beforeunload', ()=>{
+  if(!sessionId)return;
+  try{
+    const now = new Date();
+    const leaveTime = now.toTimeString().substr(0,8);
+    const duration = Math.floor((Date.now()-sessionStartTs)/1000);
+    const data = new FormData();
+    data.append('action','updateLog');
+    data.append('sessionId',sessionId);
+    data.append('leaveTime',leaveTime);
+    data.append('duration',duration+'초');
+    data.append('allVerbs',logCounts.allVerbs+'');
+    data.append('study3',logCounts.study3+'');
+    data.append('test3',logCounts.test3+'');
+    data.append('wrongStudy',logCounts.wrongStudy+'');
+    navigator.sendBeacon(GS_URL, data);
+  }catch(e){}
+});
+
+// ════════════════════════════════════════════════════════════════
+// 초기화
+// ════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const nameInp = document.getElementById('nameInp');
+  nameInp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();goLogin()}
+  });
+  // 캐시된 학생 정보가 있으면 자동 채움
+  const last = loadLocal('lastLogin');
+  if(last){
+    nameInp.value = last.name||'';
+    if(last.studentType) selectType(last.studentType);
+  }
+});
+
+// 학생 정보 캐시
+function cacheLogin(){
+  saveLocal('lastLogin', {name:studentName, studentType:studentType});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- 카카오톡 인앱브라우저 → 외부 브라우저 자동 전환 -->
+<script>
+(function(){var ua=navigator.userAgent.toLowerCase();
+ if(/kakaotalk/i.test(ua)){var url=window.location.href;
+  if(/iphone|ipad|ipod/i.test(ua)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);}
+  else{location.href='intent://'+url.replace(/https?:\/\//i,'')+'#Intent;scheme=https;package=com.android.chrome;end';}}
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>GnB Star-Words 앱 사용 안내 | GnB연세스타 권곡캠퍼스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#8B5CF6;--purple-d:#7C3AED;--cyan:#06B6D4;--gold:#F59E0B;--gold-l:#FBBF24;
+  --ink:#1F2937;--muted:#6B7280;--line:#F3E8FF;
+  --green:#10B981;--red:#EF4444;--blue:#3B82F6;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(139,92,246,.12),transparent 40%),
+    radial-gradient(circle at 85% 20%,rgba(6,182,212,.12),transparent 40%),
+    linear-gradient(160deg,#FAF5FF 0%,#ECFEFF 50%,#FEF9EC 100%);
+  color:var(--ink);min-height:100vh;line-height:1.6;
+  padding:0 0 40px;
+}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#8B5CF6 0%,#06B6D4 55%,#F59E0B 100%);
+  margin:0 -16px 0;padding:34px 26px 30px;color:white;text-align:center;
+  position:relative;overflow:hidden;border-radius:0 0 30px 30px;
+  box-shadow:0 12px 40px rgba(124,58,237,.28);
+}
+.hero::before{content:'';position:absolute;top:-50px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);border-radius:50%}
+.hero::after{content:'⭐';position:absolute;bottom:-18px;left:-8px;font-size:90px;opacity:.16;transform:rotate(-18deg)}
+.hero .star{font-size:52px;filter:drop-shadow(0 6px 18px rgba(253,224,71,.6));margin-bottom:6px;display:inline-block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero .logo{display:inline-block;background:linear-gradient(135deg,#F59E0B,#FBBF24);font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;padding:6px 18px;border-radius:12px;letter-spacing:.3px;margin-bottom:14px;box-shadow:0 4px 16px rgba(245,158,11,.45),inset 0 1px 0 rgba(255,255,255,.3);text-shadow:0 1px 4px rgba(0,0,0,.15);position:relative;z-index:1}
+.hero h1{font-family:'Jua',sans-serif;font-weight:400;font-size:25px;line-height:1.3;text-shadow:0 2px 12px rgba(0,0,0,.2);position:relative;z-index:1}
+.hero .sub{font-size:13px;font-weight:600;opacity:.95;margin-top:8px;position:relative;z-index:1}
+
+/* ── 인트로 ── */
+.intro{background:white;border-radius:18px;padding:18px 20px;margin:20px 0;box-shadow:0 6px 24px rgba(139,92,246,.08);border:1px solid var(--line)}
+.intro p{font-size:14px;color:#374151;font-weight:500}
+.intro .hi{color:var(--purple-d);font-weight:900}
+
+/* ── 섹션 ── */
+.section{margin:26px 0}
+.sec-head{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.sec-num{flex-shrink:0;width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:white;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.sec-num.n1{background:linear-gradient(135deg,#3B82F6,#06B6D4)}
+.sec-num.n2{background:linear-gradient(135deg,#8B5CF6,#A78BFA)}
+.sec-num.n3{background:linear-gradient(135deg,#F59E0B,#FBBF24)}
+.sec-num.n4{background:linear-gradient(135deg,#10B981,#34D399)}
+.sec-title{font-family:'Jua',sans-serif;font-weight:400;font-size:19px;color:var(--ink);line-height:1.25}
+.sec-title .em{color:var(--purple-d)}
+
+/* 카드 */
+.card{background:white;border-radius:18px;padding:18px 18px 6px;box-shadow:0 6px 22px rgba(0,0,0,.05);border:1px solid #F1F0F5;margin-bottom:12px;overflow:hidden}
+.card-lead{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:14px;background:#F9FAFB;border-radius:11px;padding:10px 13px;border-left:4px solid #E5E7EB}
+
+/* 단계 리스트 */
+.step{display:flex;gap:12px;padding:11px 2px;border-bottom:1px dashed #EEF0F3}
+.step:last-child{border-bottom:none}
+.step-dot{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#06B6D4);color:white;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(124,58,237,.25)}
+.step-body{flex:1;padding-top:1px}
+.step-body .t{font-size:14px;font-weight:700;color:var(--ink);line-height:1.45}
+.step-body .d{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.step-body .path{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:6px}
+.path .p{background:#F3E8FF;color:var(--purple-d);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap}
+.path .arr{color:#C4B5FD;font-weight:900;font-size:11px}
+
+/* 강조 박스 */
+.tip{display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#ECFEFF,#CFFAFE);border:1px solid #A5F3FC;border-radius:13px;padding:13px 15px;margin:14px 0}
+.tip.gold{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:#FDE68A}
+.tip.green{background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-color:#A7F3D0}
+.tip .ic{font-size:20px;flex-shrink:0;line-height:1.3}
+.tip .tx{font-size:13px;font-weight:600;color:#374151;line-height:1.55}
+.tip .tx b{color:var(--ink);font-weight:900}
+
+/* 추천 배지 */
+.best{display:inline-block;background:linear-gradient(135deg,#10B981,#34D399);color:white;font-size:11px;font-weight:900;padding:3px 10px;border-radius:7px;margin-left:6px;vertical-align:middle;box-shadow:0 2px 8px rgba(16,185,129,.3)}
+
+/* 연락처 */
+.contact{background:linear-gradient(135deg,#7C3AED 0%,#0E7490 100%);border-radius:20px;padding:24px 22px;color:white;text-align:center;box-shadow:0 12px 36px rgba(124,58,237,.3);position:relative;overflow:hidden}
+.contact::after{content:'📞';position:absolute;top:-14px;right:-6px;font-size:80px;opacity:.13;transform:rotate(14deg)}
+.contact h3{font-family:'Jua',sans-serif;font-weight:400;font-size:19px;margin-bottom:6px;position:relative;z-index:1}
+.contact .msg{font-size:13px;font-weight:600;opacity:.95;margin-bottom:16px;position:relative;z-index:1}
+.contact .row{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
+.contact .item{background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:11px;text-align:left}
+.contact .item .em{font-size:22px}
+.contact .item .lab{font-size:11px;opacity:.85;font-weight:600}
+.contact .item .val{font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;letter-spacing:.3px}
+.contact .item .val.ko{font-family:'Noto Sans KR',sans-serif;font-size:14px}
+
+/* 푸터 */
+.foot{text-align:center;margin-top:26px;font-size:11.5px;color:#9CA3AF;font-weight:600;line-height:1.7}
+.foot .nm{font-family:'Jua',sans-serif;color:var(--purple-d);font-size:13px}
+
+/* 빠른 요약 */
+.quick{background:white;border:2px dashed #DDD6FE;border-radius:16px;padding:16px 18px;margin:20px 0}
+.quick .qh{font-family:'Jua',sans-serif;font-size:15px;color:var(--purple-d);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.quick .qi{display:flex;gap:9px;font-size:13px;font-weight:600;color:#374151;padding:5px 0;align-items:flex-start}
+.quick .qi .c{color:var(--green);font-weight:900;flex-shrink:0}
+
+@media print{
+  body{background:white}
+  .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card,.contact,.intro{box-shadow:none;break-inside:avoid}
+  .section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="star">⭐</div><br>
+  <div class="logo">GnB Star-Words</div>
+  <h1>앱이 잘 안 될 때<br>해결 안내서</h1>
+  <div class="sub">GnB연세스타 권곡캠퍼스 · 학부모님 안내용</div>
+</div>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p><span class="hi">안녕하세요, 학부모님 😊</span><br>
+    우리 아이가 단어 학습 앱을 쓰다가 <b>접속이 안 되거나 소리가 안 날 때</b>, 아래 순서대로 한 번씩만 따라 해 주시면 대부분 바로 해결됩니다. 어렵지 않으니 천천히 확인해 주세요!</p>
+  </div>
+
+  <!-- 빠른 요약 -->
+  <div class="quick">
+    <div class="qh">⚡ 급할 때 먼저 이것부터!</div>
+    <div class="qi"><span class="c">1.</span><span>앱을 완전히 닫았다가 다시 열기</span></div>
+    <div class="qi"><span class="c">2.</span><span>와이파이 ↔ 데이터(LTE) 바꿔서 접속</span></div>
+    <div class="qi"><span class="c">3.</span><span>그래도 안 되면 → <b>네이버 웨일 브라우저</b> 설치 후 접속</span></div>
+    <div class="qi"><span class="c">4.</span><span>소리 안 나면 → 폰 볼륨 키우고 화면 한 번 터치</span></div>
+  </div>
+
+  <!-- 섹션 1: 접속 -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num n1">📡</div>
+      <div class="sec-title"><span class="em">접속</span>이 안 될 때</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lead">💡 크롬에서 안 들어가지는 경우가 가장 많아요. 아래 순서대로 해보세요.</div>
+
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <div class="t">크롬 인터넷 기록(캐시) 지우기</div>
+          <div class="d">오래된 정보가 남아 충돌하는 경우가 많습니다. 한 번 비워주면 깨끗해져요.</div>
+          <div class="path">
+            <span class="p">크롬 ⋮ 메뉴</span><span class="arr">▸</span>
+            <span class="p">설정</span><span class="arr">▸</span>
+            <span class="p">개인정보 보호</span><span class="arr">▸</span>
+            <span class="p">인터넷 사용 기록 삭제</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <div class="t">'데이터 절약 모드'가 켜져 있으면 끄기</div>
+          <div class="d">이 기능이 켜져 있으면 일부 기능이 막힐 수 있어요.</div>
+          <div class="path">
+            <span class="p">크롬 ⋮ 메뉴</span><span class="arr">▸</span>
+            <span class="p">설정</span><span class="arr">▸</span>
+            <span class="p">데이터 절약 모드 끄기</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <div class="t">와이파이를 끄고 데이터(LTE/5G)로 접속</div>
+          <div class="d">집·학교 와이파이가 특정 사이트를 막는 경우가 있어요. 데이터로 바꿔보면 구분됩니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip green">
+      <div class="ic">✅</div>
+      <div class="tx"><b>그래도 안 되면 '네이버 웨일' 브라우저를 설치해 주세요!</b><br>
+      플레이스토어(안드로이드) 또는 앱스토어(아이폰)에서 <b>'네이버 웨일'</b>을 검색해 설치한 뒤, 학원에서 보내드린 주소를 입력하면 잘 열리는 경우가 많습니다. 크롬이 막혀도 웨일 브라우저는 되는 경우가 흔해요.</div>
+    </div>
+
+    <div class="tip gold">
+      <div class="ic">📅</div>
+      <div class="tx"><b>폰 날짜·시간이 맞는지도 확인해 주세요.</b><br>
+      시간이 틀어져 있으면 보안 문제로 접속이 막힙니다. <b>설정 → 날짜 및 시간 → 자동 설정 켜기</b>로 해두시면 안전해요.</div>
+    </div>
+  </div>
+
+  <!-- 섹션 2: 소리 -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num n2">🔊</div>
+      <div class="sec-title"><span class="em">소리(발음)</span>가 안 날 때</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lead">💡 우리 앱은 폰에 들어있는 음성 기능으로 영어를 읽어줍니다. 접속과는 별개의 문제예요.</div>
+
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <div class="t">폰이 무음/진동 모드인지 확인</div>
+          <div class="d">옆면 버튼이나 알림창에서 무음을 풀고, 미디어 볼륨을 올려주세요.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <div class="t">앱에 들어가면 화면을 한 번 터치하기</div>
+          <div class="d">브라우저는 처음에 소리를 막아두는데, 화면을 한 번 누르면 풀립니다. 시작 후 아무 곳이나 톡 눌러주세요.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <div class="t">영어 음성이 폰에 깔려 있는지 확인 (안드로이드)</div>
+          <div class="d">음성 데이터가 없으면 소리가 안 나요. 아래 경로에서 '영어'가 있는지 확인해 주세요.</div>
+          <div class="path">
+            <span class="p">설정</span><span class="arr">▸</span>
+            <span class="p">소리/접근성</span><span class="arr">▸</span>
+            <span class="p">화면 읽기(TTS)</span><span class="arr">▸</span>
+            <span class="p">언어에 영어 추가</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="ic">🎧</div>
+      <div class="tx"><b>다른 앱(유튜브 등)에서는 소리가 나나요?</b><br>
+      • 다른 데서도 안 나면 → <b>폰 볼륨·무음</b> 문제예요.<br>
+      • 다른 데선 잘 나는데 우리 앱만 안 나면 → 위 <b>3번(영어 음성)</b>을 확인해 주세요.</div>
+    </div>
+  </div>
+
+  <!-- 섹션 3: 자녀보호 -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num n3">🛡️</div>
+      <div class="sec-title"><span class="em">자녀보호 앱</span>을 쓰고 계신 경우</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lead">💡 자녀보호·시간관리 앱이 학습 사이트를 '모르는 사이트'로 보고 막는 경우가 있어요.</div>
+
+      <div class="step">
+        <div class="step-dot">★</div>
+        <div class="step-body">
+          <div class="t">아래 3개 주소를 '허용 목록'에 추가해 주세요</div>
+          <div class="d">보호 기능을 통째로 끄지 않고, 학습 사이트만 통과시킬 수 있어요. 자녀보호 앱의 '허용 사이트' 또는 '화이트리스트' 메뉴에서 추가하시면 됩니다.</div>
+          <div class="path" style="margin-top:9px">
+            <span class="p">script.google.com</span>
+          </div>
+          <div class="path" style="margin-top:5px">
+            <span class="p">script.googleusercontent.com</span>
+          </div>
+          <div class="path" style="margin-top:5px">
+            <span class="p">학원에서 보내드린 앱 주소</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip gold">
+      <div class="ic">💛</div>
+      <div class="tx">자녀보호 앱 종류(구글 패밀리링크, 엑스키퍼, 모비커브 등)에 따라 메뉴 이름이 조금씩 달라요. 어려우시면 <b>어떤 앱을 쓰시는지 학원에 알려주시면</b> 방법을 자세히 안내해 드리겠습니다.</div>
+    </div>
+  </div>
+
+  <!-- 섹션 4: 그래도 안 되면 -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num n4">💬</div>
+      <div class="sec-title">그래도 <span class="em">안 될 때</span>는</div>
+    </div>
+
+    <div class="contact">
+      <h3>편하게 연락 주세요!</h3>
+      <div class="msg">위 방법으로 안 되셔도 걱정 마세요.<br>학원에서 함께 확인해 드리겠습니다 😊</div>
+      <div class="row">
+        <div class="item">
+          <span class="em">📞</span>
+          <div>
+            <div class="lab">학원 전화</div>
+            <div class="val">041-546-0305</div>
+          </div>
+        </div>
+        <div class="item">
+          <span class="em">🕐</span>
+          <div>
+            <div class="lab">상담 가능 시간</div>
+            <div class="val ko">오후 2시 ~ 9시 (월~금)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="nm">GnB연세스타 권곡캠퍼스</div>
+    충청남도 아산시 권곡동 문화로 243번길 13<br>
+    삼부르네상스 상가동 3층 (권곡초 정문 앞)<br>
+    📚 단어는 저금이에요! 매일 조금씩 쌓아가는 영어 실력
+  </div>
+
+</div>
+
+</body>
+</html>

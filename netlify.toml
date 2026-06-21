@@ -1,0 +1,10 @@
+# netlify.toml  ── 사이트 폴더 맨 위(루트)에 둡니다
+[functions]
+  directory = "netlify/functions"
+
+# /api/<이름표> 요청을 함수로 전달. key 쿼리 + 경로 둘 다로 이름표를 넘김
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/proxy/:splat?key=:splat"
+  status = 200
+  force = true
