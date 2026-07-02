@@ -893,7 +893,7 @@ function startSess(name){
       // 🆕 틀단테스트 4개 옵션별 마크
       wrongToday:false,wrong3days:false,wrong1week:false,wrong2weeks:false,
       sessionId:uid(),_t:now,
-      learnType:'basic',learnInfo:''};
+      learnType:'basic',learnInfo:'',wrongCount:0};
   updateLearnTypeFromMode();
   saveLocal();
   sheetSend({action:'save',name:SL.name,date:SL.date,loginTime:SL.loginTime,sessionId:SL.sessionId});
@@ -907,7 +907,7 @@ function updateSess(){
   sheetSend({action:'update',sessionId:SL.sessionId,name:SL.name,date:SL.date,loginTime:SL.loginTime,logoutTime:SL.logoutTime,studyMinutes:SL.studyMinutes,
     wordStudy:SL.wordStudy,mcqQuiz:SL.mcqQuiz,writingQuiz:SL.writingQuiz,
     wrongToday:SL.wrongToday,wrong3days:SL.wrong3days,wrong1week:SL.wrong1week,wrong2weeks:SL.wrong2weeks,
-    learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||''});
+    learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||'', wrongCount:SL.wrongCount||0});
 }
 function done(f){ if(SL&&!SL[f]){ SL[f]=true; updateLearnTypeFromMode(); updateSess(); } }
 
@@ -929,7 +929,7 @@ function saveLocal(){
       wordStudy:SL.wordStudy,mcqQuiz:SL.mcqQuiz,writingQuiz:SL.writingQuiz,
       wrongToday:SL.wrongToday,wrong3days:SL.wrong3days,wrong1week:SL.wrong1week,wrong2weeks:SL.wrong2weeks,
       sessionId:SL.sessionId,
-      learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||''};
+      learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||'', wrongCount:SL.wrongCount||0};
     if(i>=0)logs[i]=e; else logs.push(e);
     localStorage.setItem('gnb_logs_'+GRADE,JSON.stringify(logs));
   } catch(e) {
@@ -946,7 +946,7 @@ window.addEventListener('beforeunload',()=>{
   navigator.sendBeacon(GS_URL, new Blob([JSON.stringify({action:'update',sessionId:SL.sessionId,name:SL.name,date:SL.date,loginTime:SL.loginTime,logoutTime:ts(now),studyMinutes:Math.max(1,Math.round((now-SL._t)/60000)),
     wordStudy:SL.wordStudy,mcqQuiz:SL.mcqQuiz,writingQuiz:SL.writingQuiz,
     wrongToday:SL.wrongToday,wrong3days:SL.wrong3days,wrong1week:SL.wrong1week,wrong2weeks:SL.wrong2weeks,
-    learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||''})],{type:'text/plain'}));
+    learnType:SL.learnType||'basic', learnInfo:SL.learnInfo||'', wrongCount:SL.wrongCount||0})],{type:'text/plain'}));
 });
 
 // ════════════════════════════════════════════
@@ -1111,6 +1111,7 @@ function saveLocalWrong(w, quizType) {
 function recordWrong(w, quizType) {
   if (!SL) { console.warn('⚠️ 로그인 안 됨 — 오답 기록 스킵'); return; }
   if (!w || !w.eng) { console.warn('⚠️ 오답 단어 정보 없음'); return; }
+  SL.wrongCount=(SL.wrongCount||0)+1;  // 🆕 그날 오답 카운트
 
   // 1. 로컬 저장 (즉시, 100% 성공) — iOS/오프라인에서도 살아남음
   saveLocalWrong(w, quizType);
