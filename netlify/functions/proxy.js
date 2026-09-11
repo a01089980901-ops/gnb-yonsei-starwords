@@ -1,6 +1,5 @@
-// netlify/functions/proxy.js  — GnB 단어장 프록시 (유형 B / MAP)
+// netlify/functions/proxy.js — GnB 단어장 프록시 (유형 B / MAP)
 const MAP = {
-  "index": "https://script.google.com/macros/s/AKfycbyJzY2cg9qiSue8_0wpgwVVvLG4ENEZXt1GtRVWObUwpdqEemVe7VGQCZzgWYy9554O/exec",
   "e1-1": "https://script.google.com/macros/s/AKfycbyoL3jlu0Qxji3LzX14ODkrZf_XzwM-O9zLa1FJf_T14pDu2db2WbQg15vTYTYpf41p/exec",
   "e2-1": "https://script.google.com/macros/s/AKfycbyzl5nxaZtB2LqRnOrnY73G8smihmSEm6bIFCqz9ttDPothHAITecZeM7SUOXgjX4ENlA/exec",
   "e2-2": "https://script.google.com/macros/s/AKfycbyxqqIUPJADP6xIx9sz24AW7hvrj50g2AncjoRPEx19LBubpDqI3B8l2QAvKIVI_soA3w/exec",
@@ -12,8 +11,9 @@ const MAP = {
   "m2": "https://script.google.com/macros/s/AKfycbwQTsiSdowkBCUGuvL1CbvcEdNhH6sh-PkfNo_xKR7ZAywlYh2q4-afq9YiegDdLNRg/exec",
   "m3": "https://script.google.com/macros/s/AKfycby_WzlOJRdsV9X102GltEtXOqmMH2nwv7TfdqaV_55mKjbF5pSDnzdxruYF7kw26be3/exec",
   "h1": "https://script.google.com/macros/s/AKfycbzuxOjul2xQrT7RDQ5y_EkyPpZjU8BXABnmsElPoEvqAA-Q3JrPUCFZLk6mc0gQduh5GQ/exec",
+  "sightword_stu": "https://script.google.com/macros/s/AKfycbzmcYQrzfckkczgpYbq1jgvzlErx2zjzLop4DYzXrxbZ6I8AmBXK9a_pJI7LEl3_9-L/exec",
+  "verb_3_stu": "https://script.google.com/macros/s/AKfycbxTbPCmpFrtBmo0vUx_bs7P7n5W6qiX_yWKrzia2PCOz2M6YSSWM3J9Uf2xZw7YiVlpkQ/exec",
 };
-
 exports.handler = async (event) => {
   try {
     const q = event.queryStringParameters || {};

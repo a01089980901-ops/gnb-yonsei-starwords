@@ -2136,8 +2136,15 @@ function submitWrite(){
   const v=(document.getElementById('wInp')?.value||'').trim(); if(!v)return;
   const w=WQ.cur;
   let ok=false;
-  if(WQ.sub==='eng') ok=v.toLowerCase()===w.eng.toLowerCase();
-  else{ const ks=w.kor.split(/[,，·、\s\/]+/).map(k=>k.trim()).filter(Boolean); ok=ks.some(k=>v.includes(k)||k.includes(v)); }
+  const normEn = s => String(s||'').toLowerCase().replace(/[\s\-]/g,'').trim();
+  if(WQ.sub==='eng') ok = normEn(v)===normEn(w.eng);
+  else{
+    // 🆕 뜻 채점: 앞글자 일부만 써도 정답되던 문제 수정 → 뜻 단위 완전일치
+    const normKo = s => String(s||'').replace(/\([^)]*\)/g,'').replace(/[\s~·,，、.\/]/g,'').trim();
+    const ks = w.kor.split(/[,，·、\/\n]+/).map(normKo).filter(Boolean);
+    const nv = normKo(v);
+    ok = nv.length>0 && ks.some(k=>k===nv);
+  }
   // 🆕 사운드 효과
   if (ok) playCorrect(); else playWrong();
   const r=document.getElementById('wResult');
