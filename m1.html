@@ -2104,11 +2104,13 @@ function renderWrite(){
   showWriteCard();
 }
 function showWriteCard(){
-  if(!WQ.active||!WQ.queue.length)return;
+  if(!WQ.active)return;
+  if(!WQ.queue.length){ endWrite(); return; }   // 🆕 큐가 비면 멈추지 않고 종료
   WQ.cur=WQ.queue[0]; WQ.sub=Math.random()<0.5?'kor':'eng';
   const w=WQ.cur;
   const pct=WQ.total>0?Math.round(WQ.done/WQ.total*100):0;
-  const blank=w.eng.length<=4?'_'.repeat(w.eng.length):w.eng[0]+'_'.repeat(w.eng.length-2)+w.eng.at(-1);
+  const _en=String(w.eng||''), _ko=String(w.kor||'');
+  const blank=_en.length<=4?'_'.repeat(Math.max(_en.length,1)):_en.charAt(0)+'_'.repeat(_en.length-2)+_en.charAt(_en.length-1);
   const m=document.getElementById('main');
   m.innerHTML=`
     <div class="quiz-wrap">
@@ -2119,7 +2121,7 @@ function showWriteCard(){
       <div class="write-prompt">
         <div class="wp-badge">✍️ 쓰기 퀴즈</div>
         ${WQ.sub==='kor'
-          ? `<div style="display:flex;align-items:center;gap:10px"><div class="wp-word">${esc(w.eng)}</div><button class="speak-btn" onclick="speak('${w.eng.replace(/'/g,"\\'")}',this)" style="font-size:22px">🔊</button></div><div style="font-family:'Nunito';font-size:13px;color:#6D28D9">${esc(w.pron)}</div><div class="wp-hint">💡 한국어 뜻을 입력하세요 · 첫 글자 힌트: "${esc(w.kor.length <= 2 ? getInitial(w.kor.charAt(0)) : w.kor.charAt(0))}"</div>`
+          ? `<div style="display:flex;align-items:center;gap:10px"><div class="wp-word">${esc(w.eng)}</div><button class="speak-btn" onclick="speak('${w.eng.replace(/'/g,"\\'")}',this)" style="font-size:22px">🔊</button></div><div style="font-family:'Nunito';font-size:13px;color:#6D28D9">${esc(w.pron)}</div><div class="wp-hint">💡 한국어 뜻을 입력하세요 · 첫 글자 힌트: "${esc(w.kor.length <= 2 ? getInitial(_ko.charAt(0)) : _ko.charAt(0))}"</div>`
           : `<div class="wp-word">${esc(w.kor)}</div><div class="wp-hint">💡 영어 단어 스펠링 · ${w.eng.length}글자 <span style="font-family:'Nunito';letter-spacing:3px;font-weight:700">${esc(blank)}</span></div>`
         }
       </div>
@@ -2145,18 +2147,23 @@ function submitWrite(){
     const nv = normKo(v);
     ok = nv.length>0 && ks.some(k=>k===nv);
   }
-  // 🆕 사운드 효과
-  if (ok) playCorrect(); else playWrong();
+  // 🆕 사운드 효과 (실패해도 진행은 계속)
+  try { if (ok) playCorrect(); else playWrong(); } catch(e){ console.warn('sound skip', e); }
   const r=document.getElementById('wResult');
   const okMsgs = ['🎉 정답!', '🌟 최고예요!', '👏 잘했어요!'];
   const okMsg = okMsgs[Math.floor(Math.random()*okMsgs.length)];
   if(r){ r.className='quiz-result '+(ok?'qr-ok':'qr-ng'); r.innerHTML=`<div class="qr-icon">${ok?'🎉':'😊'}</div><div class="qr-text">${ok?`${okMsg} <strong>${esc(w.eng)}</strong> = ${esc(w.kor)}`:`정답: <strong>${esc(WQ.sub==='eng'?w.eng:w.kor)}</strong> · 입력: ${esc(v)}<br><span style="font-size:11px;color:#991B1B;font-weight:800;background:rgba(255,255,255,.6);padding:2px 8px;border-radius:8px;display:inline-block;margin-top:4px">📝 오답노트 기록됨</span>`}</div>`; }
-  document.getElementById('wInp').disabled=true;
-  document.querySelector('.write-sub').disabled=true;
+  const _inp=document.getElementById('wInp'); if(_inp) _inp.disabled=true;
+  const _sub=document.querySelector('.write-sub'); if(_sub) _sub.disabled=true;
   WQ.queue.shift();
   if(ok){ WQ.done++; if(!WQ.queue.length){ setTimeout(()=>endWrite(),1000); return; } }
-  else { WQ.queue.splice(Math.min(2,WQ.queue.length),0,w); recordWrong(w, '쓰기'); }
-  setTimeout(showWriteCard,2500);
+  else {
+    WQ.queue.splice(Math.min(2,WQ.queue.length),0,w);
+    try { recordWrong(w, '쓰기'); } catch(e){ console.warn('오답 기록 실패(진행은 계속)', e); }
+  }
+  // 🆕 어떤 오류가 나도 다음 문제로 반드시 넘어가도록 보장
+  if(WQ._t) clearTimeout(WQ._t);
+  WQ._t=setTimeout(()=>{ try{ showWriteCard(); }catch(e){ console.error('카드 표시 실패', e); endWrite(); } },2500);
 }
 function endWrite(){
   WQ.active=false; done('writingQuiz');
