@@ -1535,7 +1535,7 @@ async function syncFromSheet(){
   setSyncPill('load','로딩 중...');
   const r=await sheetFetch({action:'getWords'});
   if(r&&r.success&&r.words&&r.words.length>0){
-    WDB=r.words;
+    WDB=normalizeWDB(r.words);
     syncWDBFull();  // ★ Set/Week 필터 시스템 동기화
     try { localStorage.setItem('gnb_wc_'+GRADE,JSON.stringify(WDB)); } catch(e){}
     try { localStorage.setItem(SYNC_KEY,JSON.stringify(WDB)); } catch(e){} // 🆕 스냅샷도 갱신
@@ -1559,7 +1559,7 @@ async function loadWords(){
   setSyncPill('load','로딩 중...');
   const r=await sheetFetch({action:'getWords'});
   if(r&&r.success&&r.words&&r.words.length>0){
-    WDB=r.words;
+    WDB=normalizeWDB(r.words);
     syncWDBFull();  // ★ Set/Week 필터 시스템 동기화
     try { localStorage.setItem('gnb_wc_'+GRADE,JSON.stringify(WDB)); } catch(e){}
     try { localStorage.setItem(SYNC_KEY,JSON.stringify(WDB)); } catch(e){} // 🆕 스냅샷도 갱신
@@ -1567,7 +1567,7 @@ async function loadWords(){
   } else {
     try {
       const c=localStorage.getItem('gnb_wc_'+GRADE);
-      if(c){ WDB=JSON.parse(c); setSyncPill('load','📦 캐시 '+WDB.length+'개'); }
+      if(c){ WDB=normalizeWDB(JSON.parse(c)); setSyncPill('load','📦 캐시 '+WDB.length+'개'); }
       else setSyncPill('err','연결 필요 — 기본 단어 사용');
     } catch(e) {
       setSyncPill('err','연결 필요 — 기본 단어 사용');
@@ -1672,7 +1672,7 @@ function filterWords(q){
   if(!q.trim()){ renderWordCards(aw); return; }
   const kw=q.trim().toLowerCase();
   const filtered=aw.filter(w=>
-    w.eng.toLowerCase().includes(kw) ||
+    String(w.eng==null?'':w.eng).toLowerCase().includes(kw) ||
     w.kor.includes(kw) ||
     (w.pron||'').includes(kw) ||
     (w.ex||'').toLowerCase().includes(kw) ||
@@ -1893,11 +1893,11 @@ function showMCQCard(){
   // 🆕 오답 학습 모드에서 보기가 부족하면 원본 활성 단어장에서 채우기
   if (others.length < 3 && window._wrongStudyRestore) {
     const original = window._wrongStudyRestore.filter(o => o.active !== false && o.eng !== w.eng);
-    const seen = new Set(others.map(o => o.eng.toLowerCase()));
+    const seen = new Set(others.map(o => String(o.eng==null?'':o.eng).toLowerCase()));
     original.forEach(o => {
-      if (!seen.has(o.eng.toLowerCase())) {
+      if (!seen.has(String(o.eng==null?'':o.eng).toLowerCase())) {
         others.push(o);
-        seen.add(o.eng.toLowerCase());
+        seen.add(String(o.eng==null?'':o.eng).toLowerCase());
       }
     });
   }
@@ -2013,14 +2013,48 @@ window.SWLOG=(function(){
 window.onerror=function(m,src,ln){ try{SWLOG.push('onerror',m+' @'+String(src||'').split('/').pop()+':'+ln); SWLOG.bar('오류가 발생했어요');}catch(e){} };
 window.addEventListener('unhandledrejection',function(e){ try{SWLOG.push('reject',(e.reason&&e.reason.message)||e.reason);}catch(_){} });
 // 단어 데이터 정리: 빈 뜻/빈 영어 등 스프레드시트 오류 방어
+
+// 🆕 단어 데이터 원천 정규화: 구글시트 true/false·숫자 → 문자열로 강제
+function normWordRow(w){
+  function cell(v){
+    if(v===true) return 'true';
+    if(v===false) return 'false';
+    if(v==null) return '';
+    return String(v);
+  }
+  if(!w||typeof w!=='object') return null;
+  return Object.assign({},w,{
+    eng: cell(w.eng).trim(),
+    kor: cell(w.kor).trim(),
+    pron: cell(w.pron),
+    pos: cell(w.pos),
+    ex: cell(w.ex),
+    exKor: cell(w.exKor),
+    set: cell(w.set),
+    week: cell(w.week)
+  });
+}
+function normalizeWDB(list){
+  var out=[];
+  (list||[]).forEach(function(w){ var n=normWordRow(w); if(n) out.push(n); });
+  return out;
+}
+
 function sanitizeWords(list){
   var bad=[], out=[];
+  // 🆕 구글시트가 true/false 를 불리언으로 바꿔버리는 문제 복구
+  function cell(v){
+    if(v===true) return 'true';
+    if(v===false) return 'false';
+    if(v==null) return '';
+    return String(v);
+  }
   (list||[]).forEach(function(w,i){
     if(!w||typeof w!=='object'){ bad.push('#'+i+' (빈 행)'); return; }
-    var eng=String(w.eng==null?'':w.eng).trim();
-    var kor=String(w.kor==null?'':w.kor).trim();
+    var eng=cell(w.eng).trim();
+    var kor=cell(w.kor).trim();
     if(!eng||!kor){ bad.push((eng||kor||('#'+i))+' (영어/뜻 비어있음)'); return; }
-    out.push(Object.assign({},w,{eng:eng,kor:kor,pron:String(w.pron==null?'':w.pron),pos:String(w.pos==null?'':w.pos)}));
+    out.push(Object.assign({},w,{eng:eng,kor:kor,pron:cell(w.pron),pos:cell(w.pos)}));
   });
   if(bad.length){
     SWLOG.push('data','단어 데이터 오류 '+bad.length+'개 제외', bad.slice(0,15).join(', '));
@@ -2056,7 +2090,7 @@ function showWriteCard(){
         <div class="wp-badge">✍️ 쓰기 퀴즈</div>
         ${WQ.sub==='kor'
           ? `<div style="display:flex;align-items:center;gap:10px"><div class="wp-word">${esc(w.eng)}</div><button class="speak-btn" onclick="speak('${w.eng.replace(/'/g,"\\'")}',this)" style="font-size:22px">🔊</button></div><div style="font-family:'Nunito';font-size:13px;color:#6D28D9">${esc(w.pron)}</div><div class="wp-hint">💡 한국어 뜻을 입력하세요 · 첫 글자 힌트: "${esc(w.kor.length <= 2 ? getInitial(_ko.charAt(0)) : _ko.charAt(0))}"</div>`
-          : `<div class="wp-word">${esc(w.kor)}</div><div class="wp-hint">💡 영어 단어 스펠링 · ${w.eng.length}글자 <span style="font-family:'Nunito';letter-spacing:3px;font-weight:700">${esc(blank)}</span></div>`
+          : `<div class="wp-word">${esc(_ko)}</div><div class="wp-hint">💡 영어 단어 스펠링 · ${_en.length}글자 <span style="font-family:'Nunito';letter-spacing:3px;font-weight:700">${esc(blank)}</span></div>`
         }
       </div>
       <div class="write-inp-row">
@@ -2289,7 +2323,8 @@ function setWrongDays(days) {
 
 function getWrongWordDB() {
   return wrongData.map(w => {
-    const full = WDB.find(d => d.eng.toLowerCase() === w.eng.toLowerCase());
+    const _we=String(w&&w.eng!=null?w.eng:'').toLowerCase();
+    const full = WDB.find(d => d && String(d.eng==null?'':d.eng).toLowerCase() === _we);
     if (full) return { ...full, active: true };
     return {
       eng: w.eng,
@@ -2320,7 +2355,8 @@ function startWrongQuiz(type) {
   markWrongTest(); // 🆕 학습로그에 현재 옵션(오늘/3일/1주/2주) 마크
   window._wrongStudyRestore = WDB;
   window._wrongMode = true;
-  WDB = words;
+  WDB = sanitizeWords(words);
+  if(!WDB.length){ alert('오답 단어 정보가 올바르지 않아요.'); WDB = window._wrongStudyRestore; window._wrongMode=false; return; }
   goTab(type === 'mcq' ? 'mcq' : 'write');
 }
 
@@ -2906,7 +2942,7 @@ async function generateWorksheet() {
   // 🆕 단어장(WDB)에서 발음기호 보충 — 오답 시트엔 pron 컬럼이 없으므로
   wrongs.forEach(w => {
     if (!w.pron && Array.isArray(WDB)) {
-      const match = WDB.find(x => x.eng && x.eng.toLowerCase() === w.eng.toLowerCase());
+      const match = WDB.find(x => x && x.eng && String(x.eng).toLowerCase() === String(w&&w.eng!=null?w.eng:'').toLowerCase());
       if (match && match.pron) w.pron = match.pron;
     }
   });
@@ -3090,7 +3126,7 @@ window.onload=()=>{
   setTimeout(()=>document.getElementById('nameInp').focus(), 300);
   try {
     const cache=localStorage.getItem('gnb_wc_'+GRADE);
-    if(cache){ WDB=JSON.parse(cache); updateWCnt(); }
+    if(cache){ WDB=normalizeWDB(JSON.parse(cache)); updateWCnt(); }
   } catch(e){}
   document.getElementById('main').innerHTML='';
   loadAppInfo(); // 🆕 V7: 백그라운드로 비밀번호 등 학원 설정 로드
