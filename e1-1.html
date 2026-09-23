@@ -2010,10 +2010,23 @@ window.SWLOG=(function(){
   function clear(){ try{localStorage.removeItem(KEY);}catch(e){} }
   return {push:push,bar:bar,view:view,clear:clear};
 })();
-window.onerror=function(m,src,ln){ try{SWLOG.push('onerror',m+' @'+String(src||'').split('/').pop()+':'+ln); SWLOG.bar('오류가 발생했어요');}catch(e){} };
+window.onerror=function(m,src,ln){
+  try{
+    var msg=String(m||'');
+    SWLOG.push('onerror', msg+' @'+String(src||'').split('/').pop()+':'+ln);
+    // 'Script error.' = 외부(구글) 스크립트 로드 실패 — 보통 네트워크 일시 문제라 배너 생략
+    if(msg.indexOf('Script error')===-1) SWLOG.bar('오류가 발생했어요');
+  }catch(e){}
+};
 window.addEventListener('unhandledrejection',function(e){ try{SWLOG.push('reject',(e.reason&&e.reason.message)||e.reason);}catch(_){} });
+// 🆕 화면 전환 중 발생한 사소한 오류는 배너 없이 기록만
 // 단어 데이터 정리: 빈 뜻/빈 영어 등 스프레드시트 오류 방어
 
+
+// 🆕 화면이 이미 바뀐 뒤 실행돼도 안전하게 (탭 이동 중 null 오류 방지)
+function $id(id){ try{ return document.getElementById(id); }catch(e){ return null; } }
+function setDisp(id, v){ var el=$id(id); if(el) el.style.display=v; }
+function setHTML(id, v){ var el=$id(id); if(el) el.innerHTML=v; }
 // 🆕 단어 데이터 원천 정규화: 구글시트 true/false·숫자 → 문자열로 강제
 function normWordRow(w){
   function cell(v){
@@ -2208,13 +2221,16 @@ async function renderWrong() {
 }
 
 async function loadWrongData() {
-  if (!SL) { document.getElementById('wrongList').innerHTML = '<div class="wrong-empty"><div class="ei">👤</div>이름을 입력하고 시작하면<br>오답이 기록됩니다!</div>'; return; }
-  document.getElementById('wrongLoading').style.display = 'block';
-  document.getElementById('wrongList').innerHTML = '';
+  if (!SL) { setHTML('wrongList', '<div class="wrong-empty"><div class="ei">👤</div>이름을 입력하고 시작하면<br>오답이 기록됩니다!</div>'); return; }
+  setDisp('wrongLoading','block');
+  setHTML('wrongList','');
 
   // 1️⃣ Google Sheets에서 가져오기
-  const res = await sheetFetch({ action: 'getMyWrongs', name: SL.name, days: wrongDays });
-  document.getElementById('wrongLoading').style.display = 'none';
+  let res = null;
+  try { res = await sheetFetch({ action: 'getMyWrongs', name: SL.name, days: wrongDays }); }
+  catch(e){ SWLOG.push('getMyWrongs', e&&e.message); }
+  setDisp('wrongLoading','none');
+  if (!$id('wrongList')) return;   // 사용자가 탭을 이미 옮겼으면 중단
 
   let serverData = [];
   let serverOk = false;
