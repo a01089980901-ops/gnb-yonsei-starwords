@@ -1597,10 +1597,17 @@ function goTab(tab){
   if(el)el.classList.add('on');
   stopStudy();
   endQuiz(true);
-  if(window._wrongStudyRestore && tab!=='study' && tab!=='mcq' && tab!=='write'){
-    WDB = window._wrongStudyRestore;
-    window._wrongStudyRestore = null;
-    updateWCnt();
+  // 🆕 오답 모드 정리: '오답 공부하기/퀴즈' 버튼으로 들어온 경우가 아니면 오답 모드를 완전히 끝냄
+  if (window._enterWrong) {
+    window._enterWrong = false;            // 오답 학습 진입 중 → 유지
+  } else if (window._wrongMode || window._wrongStudyRestore) {
+    if (window._wrongStudyRestore) { WDB = window._wrongStudyRestore; window._wrongStudyRestore = null; }
+    window._wrongMode = false;
+    try { updateWCnt(); } catch(e){}
+  }
+  // 🆕 복원 대상이 없는데 오답 모드만 남아 있는 경우도 정리
+  if(!window._wrongStudyRestore && tab!=='study' && tab!=='mcq' && tab!=='write'){
+    window._wrongMode = false;
   }
   const m=document.getElementById('main');
   m.innerHTML='';
@@ -1765,6 +1772,7 @@ function wordCardHTML(w, badge, showPos=false){
 let studyT=null, studyI=0, studyList=[], nextBtnT=null; // 🆕 nextBtnT = 카운트다운 타이머
 
 function renderStudy(){
+  if(!window._wrongStudyRestore) window._wrongMode = false;   // 🆕 일반 단어공부면 오답 모드 아님
   const m=document.getElementById('main');
   const aw=AW();
   if(!aw.length){ m.innerHTML='<div class="empty-state"><div class="ei">📭</div>활성 단어가 없어요!<br>단어장에서 단어를 체크해주세요.</div>'; return; }
@@ -1867,6 +1875,7 @@ let QS={active:false,queue:[],done:0,total:0,cur:null,sub:null};
 function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
 
 function renderMCQ(){
+  if(!window._wrongStudyRestore) window._wrongMode = false;   // 🆕 일반 객관식이면 오답 모드 아님
   const aw=AW();
   if(aw.length<2){ document.getElementById('main').innerHTML='<div class="empty-state"><div class="ei">🧩</div>퀴즈를 위해 활성 단어가 2개 이상 필요해요!</div>'; return; }
   QS={active:true,queue:shuffle(aw),done:0,total:aw.length,cur:null,sub:null};
@@ -2068,6 +2077,7 @@ function sanitizeWords(list){
 let WQ={active:false,queue:[],done:0,total:0,cur:null,sub:null};
 
 function renderWrite(){
+  if(!window._wrongStudyRestore) window._wrongMode = false;   // 🆕
   const aw=sanitizeWords(AW());
   if(!aw.length){ document.getElementById('main').innerHTML='<div class="empty-state"><div class="ei">✍️</div>활성 단어가 없어요!</div>'; return; }
   WQ={active:true,queue:shuffle(aw),done:0,total:aw.length,cur:null,sub:null,_t:null};
@@ -2347,10 +2357,11 @@ function startWrongStudy() {
   const words = getWrongWordDB();
   if (!words.length) { alert('오답 단어가 없어요!'); return; }
   markWrongTest(); // 🆕 학습로그에 현재 옵션(오늘/3일/1주/2주) 마크
-  window._wrongStudyRestore = WDB;
+  if (!window._wrongStudyRestore) window._wrongStudyRestore = WDB;   // 원래 단어장 보존(중복 진입 대비)
   window._wrongMode = true;
   WDB = sanitizeWords(words);
-  if(!WDB.length){ alert('오답 단어 정보가 올바르지 않아요. 선생님께 알려주세요.'); WDB = window._wrongStudyRestore; window._wrongMode=false; return; }
+  if(!WDB.length){ alert('오답 단어 정보가 올바르지 않아요. 선생님께 알려주세요.'); WDB = window._wrongStudyRestore; window._wrongStudyRestore=null; window._wrongMode=false; return; }
+  window._enterWrong = true;
   goTab('study');
 }
 
@@ -2358,10 +2369,11 @@ function startWrongQuiz(type) {
   const words = getWrongWordDB();
   if (words.length < 2) { alert('오답 단어가 2개 이상 필요해요!'); return; }
   markWrongTest(); // 🆕 학습로그에 현재 옵션(오늘/3일/1주/2주) 마크
-  window._wrongStudyRestore = WDB;
+  if (!window._wrongStudyRestore) window._wrongStudyRestore = WDB;
   window._wrongMode = true;
   WDB = sanitizeWords(words);
-  if(!WDB.length){ alert('오답 단어 정보가 올바르지 않아요.'); WDB = window._wrongStudyRestore; window._wrongMode=false; return; }
+  if(!WDB.length){ alert('오답 단어 정보가 올바르지 않아요.'); WDB = window._wrongStudyRestore; window._wrongStudyRestore=null; window._wrongMode=false; return; }
+  window._enterWrong = true;
   goTab(type === 'mcq' ? 'mcq' : 'write');
 }
 
