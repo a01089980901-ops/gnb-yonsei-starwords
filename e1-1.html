@@ -2133,10 +2133,10 @@ function submitWrite(){
   try{
     const _e=String(w.eng==null?'':w.eng), _k=String(w.kor==null?'':w.kor);
     const normEn = s => String(s||'').toLowerCase().replace(/[\s\-]/g,'').trim();
-    const normKo = s => String(s||'').replace(/\([^)]*\)/g,'').replace(/[\s~·,，、.\/]/g,'').trim();
+    const normKo = s => String(s||'').replace(/\([^)]*\)/g,'').replace(/[\s~·,，、.\/;；|]/g,'').trim();
     if(WQ.sub==='eng') ok = normEn(v)===normEn(_e);
     else{
-      const ks = _k.split(/[,，·、\/\n]+/).map(normKo).filter(Boolean);
+      const ks = _k.split(/[,，·、\/\n;；|]+/).map(normKo).filter(Boolean);   // 🆕 세미콜론(;)·세로선(|) 구분도 인식
       const nv = normKo(v);
       ok = nv.length>0 && ks.length>0 && ks.some(k=>k===nv);
     }
