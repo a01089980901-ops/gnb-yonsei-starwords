@@ -830,20 +830,31 @@ function _sheetFetchOnce(params, timeoutMs) {
   if (!GS_URL) return Promise.resolve(null);
   return new Promise(resolve => {
     const cb = '_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,5);
-    const t = setTimeout(() => { cleanup(); resolve(null); }, timeoutMs);
-    function cleanup(){ clearTimeout(t); delete window[cb]; document.getElementById(cb)?.remove(); }
-    window[cb] = d => { cleanup(); resolve(d); };
+    let settled = false;
+    const t = setTimeout(() => { finish(null); }, timeoutMs);
+    function finish(d){
+      if (settled) return;
+      settled = true;
+      clearTimeout(t);
+      // 🆕 콜백을 바로 지우지 않고 '빈 함수'로 남겨 둠
+      //    → 시간 초과 뒤 늦게 도착한 응답이 'is not defined' 오류를 내지 않음
+      window[cb] = function(){};
+      setTimeout(() => { try { delete window[cb]; } catch(e){ window[cb] = undefined; } }, 120000);
+      try { const el = document.getElementById(cb); if (el) el.remove(); } catch(e){}
+      resolve(d);
+    }
+    window[cb] = d => { finish(d); };
     const s = document.createElement('script');
     s.id = cb;
     s.src = GS_URL + '?' + new URLSearchParams({...params, callback:cb}).toString();
-    s.onerror = () => { cleanup(); resolve(null); };
+    s.onerror = () => { finish(null); };
     document.head.appendChild(s);
   });
 }
 
 // 🍎 JSONP 재시도 로직 (iOS 대응)
 async function sheetFetch(params, retries = 2) {
-  const timeouts = [8000, 10000, 14000]; // 점진적 증가
+  const timeouts = [12000, 15000, 20000]; // 🆕 오답 조회 등 느린 요청 대비 여유 확대
   for (let attempt = 0; attempt <= retries; attempt++) {
     const result = await _sheetFetchOnce(params, timeouts[attempt] || 14000);
     if (result !== null) {
@@ -2024,7 +2035,7 @@ window.onerror=function(m,src,ln){
     var msg=String(m||'');
     SWLOG.push('onerror', msg+' @'+String(src||'').split('/').pop()+':'+ln);
     // 'Script error.' = 외부(구글) 스크립트 로드 실패 — 보통 네트워크 일시 문제라 배너 생략
-    if(msg.indexOf('Script error')===-1) SWLOG.bar('오류가 발생했어요');
+    if(msg.indexOf('Script error')===-1 && msg.indexOf('_cb_')===-1) SWLOG.bar('오류가 발생했어요');
   }catch(e){}
 };
 window.addEventListener('unhandledrejection',function(e){ try{SWLOG.push('reject',(e.reason&&e.reason.message)||e.reason);}catch(_){} });
