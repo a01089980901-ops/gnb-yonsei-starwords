@@ -38,8 +38,39 @@ exports.handler = async (event) => {
       init.headers = { "Content-Type": "text/plain;charset=utf-8" };
       init.body = raw;
     }
-    const res = await fetch(target, init);
-    const body = await res.text();
+    // 🆕 JSONP 요청이면 콜백 이름을 기억 (오류 시에도 '올바른 JS'로 답하기 위해)
+    const cbName = /^[A-Za-z_$][\w$]*$/.test(params.get("callback") || "") ? params.get("callback") : null;
+    const jsFail = (why) => ({
+      statusCode: 200,
+      headers: { "Content-Type": "application/javascript; charset=utf-8", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" },
+      body: cbName + "(" + JSON.stringify({ success: false, error: why }) + ");"
+    });
+
+    // 🆕 Netlify 제한(10초) 전에 스스로 끊고 깔끔한 실패 응답을 줌
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 9000);
+    init.signal = ctrl.signal;
+
+    let res, body;
+    try {
+      res = await fetch(target, init);
+      body = await res.text();
+    } catch (err) {
+      clearTimeout(timer);
+      if (cbName) return jsFail(err && err.name === "AbortError" ? "timeout" : "upstream_fetch");
+      throw err;
+    }
+    clearTimeout(timer);
+
+    // 🆕 구글이 데이터 대신 HTML 오류 페이지를 보낸 경우 → JSONP 형식의 실패로 바꿔 전달
+    if (cbName) {
+      const head = (body || "").trimStart();
+      if (!head.startsWith(cbName + "(") && !head.startsWith("/**/" + cbName + "(")) {
+        const hint = head.startsWith("<") ? "upstream_html" : "upstream_invalid";
+        return jsFail(hint + "_" + res.status);
+      }
+    }
+
     const ct = res.headers.get("content-type") || "application/javascript; charset=utf-8";
     return { statusCode: 200,
       headers: { "Content-Type": ct, "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" },

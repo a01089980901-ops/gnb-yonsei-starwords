@@ -990,6 +990,8 @@ function _sheetFetchOnce(params, timeoutMs) {
     s.id = cb;
     s.src = GS_URL + '?' + new URLSearchParams({...params, callback:cb}).toString();
     s.onerror = () => { finish(null); };
+    // 🆕 응답이 도착했는데 콜백이 실행되지 않았다면(=HTML 오류 페이지) 오래 기다리지 않고 바로 재시도
+    s.onload  = () => { setTimeout(() => finish(null), 300); };
     document.head.appendChild(s);
   });
 }
@@ -998,7 +1000,12 @@ function _sheetFetchOnce(params, timeoutMs) {
 async function sheetFetch(params, retries = 2) {
   const timeouts = [12000, 15000, 20000]; // 🆕 오답 조회 등 느린 요청 대비 여유 확대
   for (let attempt = 0; attempt <= retries; attempt++) {
-    const result = await _sheetFetchOnce(params, timeouts[attempt] || 14000);
+    let result = await _sheetFetchOnce(params, timeouts[attempt] || 14000);
+    // 🆕 프록시가 알려준 '일시 오류'(구글 과부하·시간초과)는 재시도 대상
+    if (result && result.success === false && /^(upstream|timeout)/.test(String(result.error||''))) {
+      SWLOG.push('upstream', String(result.error), params.action||'');
+      if (attempt < retries) result = null; else return result;
+    }
     if (result !== null) {
       if (attempt > 0) console.log(`✅ Sheets 응답 성공 (${attempt+1}번째 시도)`);
       return result;
@@ -2167,7 +2174,8 @@ window.onerror=function(m,src,ln){
     var msg=String(m||'');
     SWLOG.push('onerror', msg+' @'+String(src||'').split('/').pop()+':'+ln);
     // 'Script error.' = 외부(구글) 스크립트 로드 실패 — 보통 네트워크 일시 문제라 배너 생략
-    if(msg.indexOf('Script error')===-1 && msg.indexOf('_cb_')===-1) SWLOG.bar('오류가 발생했어요');
+    var _noisy = msg.indexOf('Script error')>-1 || msg.indexOf('_cb_')>-1 || String(src||'').indexOf('callback=_cb_')>-1;
+    if(!_noisy) SWLOG.bar('오류가 발생했어요');
   }catch(e){}
 };
 window.addEventListener('unhandledrejection',function(e){ try{SWLOG.push('reject',(e.reason&&e.reason.message)||e.reason);}catch(_){} });
