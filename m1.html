@@ -2279,9 +2279,15 @@ function submitWrite(){
     const normKo = s => String(s||'').replace(/\([^)]*\)/g,'').replace(/[\s~·,，、.\/;；|]/g,'').trim();
     if(WQ.sub==='eng') ok = normEn(v)===normEn(_e);
     else{
-      const ks = _k.split(/[,，·、\/\n;；|]+/).map(normKo).filter(Boolean);   // 🆕 세미콜론(;)·세로선(|) 구분도 인식
+      const SEP = /[,，·、\/\n;；|]+/;   // 쉼표·빗금·가운뎃점·세미콜론·세로선
+      const ks = _k.split(SEP).map(normKo).filter(Boolean);
       const nv = normKo(v);
-      ok = nv.length>0 && ks.length>0 && ks.some(k=>k===nv);
+      const vs = String(v).split(SEP).map(normKo).filter(Boolean);   // 🆕 학생 입력도 조각으로
+      ok = nv.length>0 && ks.length>0 && (
+            ks.some(k=>k===nv)                               // 뜻 하나만 정확히
+         || (vs.length>0 && vs.every(x=>ks.includes(x)))    // 🆕 여러 뜻을 함께 써도 모두 맞으면 정답
+         || normKo(_k)===nv                                  // 🆕 정답 전체를 그대로 쓴 경우
+      );
     }
   }catch(e){ SWLOG.push('judge', e&&e.message, (w&&w.eng)||''); ok=false; }
   // 🆕 사운드 효과 (실패해도 진행은 계속)
