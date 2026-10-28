@@ -1236,12 +1236,28 @@ function getSetList(){
   return Array.from(sets).sort();
 }
 
+// 🆕 단어장(Set/주차/기본)을 구분하는 키
+function _modeKey(m){ return (!m || m.type==='basic') ? 'basic' : (m.type + ':' + String(m.value)); }
+// 🆕 현재 로그 줄에 실제 학습 활동이 있었는지
+function _sessHasActivity(){
+  return !!(SL && (SL.wordStudy||SL.mcqQuiz||SL.writingQuiz||SL.wrongToday||SL.wrong3days||SL.wrong1week||SL.wrong2weeks||SL.wrongCount));
+}
 function setActiveMode(mode){
+  const _prevKey = _modeKey(activeMode);
+  const _hadAct  = _sessHasActivity();
   activeMode = mode;
   _applyFilter();
   updateActiveModeBar();
   if (typeof updateWCnt === 'function') updateWCnt();
-  if (typeof SL !== 'undefined' && SL) { updateLearnTypeFromMode(); updateSess(); }
+  if (typeof SL !== 'undefined' && SL) {
+    if (_prevKey !== _modeKey(mode) && _hadAct) {
+      // 🆕 다른 단어장으로 바꾸면: 이전 단어장 기록은 그대로 마감하고, 새 단어장은 새 로그 줄로 시작
+      updateSess();            // 이전 Set 이름·활동이 담긴 채로 저장
+      startSess(SL.name);      // 새 sessionId → 시트에 새 줄
+    } else {
+      updateLearnTypeFromMode(); updateSess();   // 아직 공부 전이면 같은 줄에서 단어장 정보만 갱신
+    }
+  }
   try { localStorage.setItem('gnb_mode_'+(typeof GRADE!=='undefined'?GRADE:'_'), JSON.stringify(mode)); } catch(e){}
 }
 function clearActiveMode(){ setActiveMode(null); }
